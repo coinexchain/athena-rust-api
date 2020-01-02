@@ -44,7 +44,7 @@ impl BigInt {
     pub fn set_i64(&self, n: i64) -> bool {
         unsafe {
             let ok = native::sci_mpint_from_int64(self.handle, n);
-            ok > 0
+            native::is_ok(ok)
         }
     }
 }

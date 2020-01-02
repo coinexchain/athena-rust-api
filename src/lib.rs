@@ -1,6 +1,7 @@
 mod big_int;
 pub mod kv;
 pub mod native;
+pub mod params;
 
 pub use big_int::BigInt;
 

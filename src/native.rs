@@ -6,16 +6,32 @@ pub type iter_t = i32;
 pub type rev_iter_t = i32;
 pub type int64_ptr_t = *mut i64;
 pub type size_ptr_t = *mut i32;
+pub type bool_ptr_t = *mut i32;
 pub type ptr_t = *mut u8;
 pub type ptr_t_ro = *const u8;
 pub type iter_result_ptr_t = *mut u8;
+
+pub fn is_ok(ret: i32) -> bool {
+    ret > 0
+}
 
 extern "C" {
     pub fn sci_get_balance() -> mpint_t;
     pub fn sci_transfer(to_addr: ptr_t, amt: mpint_t);
 
-    // env
+    // route & params
     pub fn sci_get_route_string(len_ptr: size_ptr_t) -> ptr_t;
+    pub fn sci_param_decode_as_cbor() -> int32_t;
+    pub fn sci_param_decode_as_json() -> int32_t;
+    pub fn sci_param_count() -> int32_t;
+    pub fn sci_get_param_addr(len_ptr: size_ptr_t) -> ptr_t;
+    pub fn sci_param_to_int64(n: int32_t, ok: bool_ptr_t) -> int64_t;
+    pub fn sci_param_to_int32(n: int32_t, ok: bool_ptr_t) -> int32_t;
+    pub fn sci_param_to_string(n: int32_t, len_ptr: size_ptr_t, ok: bool_ptr_t) -> ptr_t;
+    pub fn sci_param_to_byteslice(n: int32_t, len_ptr: size_ptr_t, ok: bool_ptr_t) -> ptr_t;
+    pub fn sci_param_to_int64_array(n: int32_t, len_ptr: size_ptr_t, ok: bool_ptr_t) -> int64_ptr_t;
+
+    // env
     pub fn sci_get_caller(len_ptr: size_ptr_t) -> ptr_t;
     pub fn sci_get_creator(len_ptr: size_ptr_t) -> ptr_t;
     pub fn sci_get_height() -> int64_t;
