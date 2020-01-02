@@ -1,10 +1,56 @@
-extern "C" {
-    pub fn sci_get_route_string(len: *mut i32) -> *mut u8;
-    pub fn sci_get_caller(ptr: *mut u8);
-    pub fn sci_get_address(ptr: *mut u8); // get 160 bits address
-    pub fn sci_get_balance(ptr: *mut u8); // get 256 bits big int
-    pub fn sci_transfer(to_addr: *const u8, amt: *const u8);
-    pub fn sci_bigint_from_int64(n: i64, bytes: *mut u8, sign: *mut i8);
+pub type int64_t = i64;
+pub type int32_t = i32;
+pub type mpint_t = i32;
+pub type mpdec_t = i32;
+pub type iter_t = i32;
+pub type rev_iter_t = i32;
+pub type int64_ptr_t = *mut i64;
+pub type size_ptr_t = *mut i32;
+pub type ptr_t = *mut u8;
+pub type ptr_t_ro = *const u8;
+pub type iter_result_ptr_t = *mut u8;
 
-// TODO
+extern "C" {
+    pub fn sci_get_balance() -> mpint_t;
+    pub fn sci_transfer(to_addr: ptr_t, amt: mpint_t);
+
+    // env
+    pub fn sci_get_route_string(len_ptr: size_ptr_t) -> ptr_t;
+    pub fn sci_get_caller(len_ptr: size_ptr_t) -> ptr_t;
+    pub fn sci_get_creator(len_ptr: size_ptr_t) -> ptr_t;
+    pub fn sci_get_height() -> int64_t;
+    pub fn sci_get_data_hash(len_ptr: size_ptr_t) -> ptr_t;
+    pub fn sci_get_timestamp(sec_ptr: int64_ptr_t, nanosec_ptr: int64_ptr_t);
+    pub fn sci_get_gas_limit() -> int64_t;
+    pub fn sci_get_gas_remained() -> int64_t;
+
+    // KV store
+    pub fn sci_kv_get(key: ptr_t_ro, key_len: int32_t, value_len: size_ptr_t) -> ptr_t;
+    pub fn sci_kv_set(key: ptr_t_ro, key_len: int32_t, value: ptr_t_ro, value_len: int32_t);
+    pub fn sci_kv_erase(key: ptr_t_ro, key_len: int32_t);
+    pub fn sci_kv_iterator(start: ptr_t, start_len: int32_t, end: ptr_t, end_len: int32_t) -> iter_t;
+    pub fn sci_kv_iterator_next(iter: iter_t, res_ptr: iter_result_ptr_t);
+    pub fn sci_kv_iterator_close(iter: iter_t);
+    pub fn sci_kv_reverse_iterator(start: ptr_t, start_len: int32_t, end: ptr_t, end_len: int32_t) -> rev_iter_t;
+    pub fn sci_kv_reverse_iterator_next(rev_iter: iter_t, res_ptr: iter_result_ptr_t);
+    pub fn sci_kv_reverse_iterator_close(rev_iter: iter_t);
+
+    // big int
+    pub fn sci_mpint_allocate() -> mpint_t;
+    pub fn sci_mpint_free(i: mpint_t);
+    pub fn sci_mpint_to_string(i: mpint_t, len_ptr: size_ptr_t) -> ptr_t;
+    pub fn sci_mpint_from_string(i: mpint_t, str_ptr: ptr_t, str_len: int32_t) -> int32_t;
+    pub fn sci_mpint_add(z: mpint_t, a: mpint_t, b: mpint_t);
+    pub fn sci_mpint_sub(z: mpint_t, a: mpint_t, b: mpint_t);
+    pub fn sci_mpint_mul(z: mpint_t, a: mpint_t, b: mpint_t);
+    pub fn sci_mpint_from_int64(i: mpint_t, val: int64_t) -> int32_t;
+
+    // big dec
+    pub fn sci_mpdec_allocate() -> mpdec_t;
+    pub fn sci_mpdec_free(i: mpdec_t);
+    pub fn sci_mpdec_to_string(i: mpdec_t, len_ptr: size_ptr_t) -> ptr_t;
+    pub fn sci_mpdec_from_string(i: mpdec_t, str_ptr: ptr_t, str_len: int32_t) -> int32_t;
+    pub fn sci_mpdec_add(z: mpdec_t, a: mpdec_t, b: mpdec_t);
+    pub fn sci_mpdec_sub(z: mpdec_t, a: mpdec_t, b: mpdec_t);
+    pub fn sci_mpdec_mul(z: mpdec_t, a: mpdec_t, b: mpdec_t);
 }

@@ -1,17 +1,10 @@
-pub mod big;
+mod big_int;
+pub mod kv;
 pub mod native;
 
-#[derive(Default, Copy, Clone, Debug, PartialEq, Eq)]
-pub struct Bytes20 {
-    pub bytes: [u8; 20],
-}
+pub use big_int::BigInt;
 
-#[derive(Default, Copy, Clone, Debug, PartialEq, Eq)]
-pub struct Bytes32 {
-    pub bytes: [u8; 32],
-}
-
-pub type Address = Bytes20; // AccAddress
+pub type Address = Vec<u8>; // AccAddress
 
 pub fn get_route() -> String {
     unsafe {
@@ -21,31 +14,24 @@ pub fn get_route() -> String {
     }
 }
 
-pub fn get_caller() -> Address {
+pub fn get_caller() -> Vec<u8> {
     unsafe {
-        let mut bytes = [0u8; 20];
-        native::sci_get_caller(bytes.as_mut_ptr());
-        Address { bytes: bytes }
+        let mut addr_len: i32 = 0;
+        let addr_raw = native::sci_get_caller(&mut addr_len);
+        Vec::from_raw_parts(addr_raw, addr_len as usize, addr_len as usize)
     }
 }
 
-pub fn get_address() -> Address {
+pub fn get_creator() -> Vec<u8> {
     unsafe {
-        let mut bytes = [0u8; 20];
-        native::sci_get_address(bytes.as_mut_ptr());
-        Address { bytes: bytes }
+        let mut addr_len: i32 = 0;
+        let addr_raw = native::sci_get_creator(&mut addr_len);
+        Vec::from_raw_parts(addr_raw, addr_len as usize, addr_len as usize)
     }
 }
 
-pub fn get_balance() -> big::Int256 {
-    unsafe {
-        let mut bytes = [0u8; 32];
-        native::sci_get_balance(bytes.as_mut_ptr());
-        big::Int256 {
-            bytes: bytes,
-            sign: 1,
-        }
-    }
+pub fn get_balance() -> BigInt {
+    unsafe { BigInt::wrap(native::sci_get_balance()) }
 }
 
 #[cfg(test)]
