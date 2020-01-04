@@ -1,27 +1,13 @@
 use athena_rust_api as athena;
 use athena_rust_api::{native, BigInt};
-use std::alloc::{alloc, dealloc, Layout};
 
 fn main() {
     // println!("Hello, world!");
 }
 
-#[no_mangle]
-pub extern "C" fn sce_malloc(size: i32) -> i32 {
-    unsafe {
-        let layout = Layout::from_size_align(size as usize, 1).unwrap(); // TODO
-        let ptr = alloc(layout);
-        ptr as i32
-    }
-}
+athena::sce_malloc!();
 
-#[no_mangle]
-pub extern "C" fn handle() {
-    let route = athena::get_route();
-    if route == "withdraw" {
-        // TODO
-    }
-}
+athena::handle!(deposit(i64), withdraw(i64));
 
 #[no_mangle]
 pub extern "C" fn deposit(amt: i64) {
