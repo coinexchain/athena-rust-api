@@ -33,7 +33,16 @@ pub fn get_creator() -> Vec<u8> {
 }
 
 pub fn get_balance() -> BigInt {
-    unsafe { BigInt::wrap(native::sci_get_balance()) }
+    unsafe { 
+        let cet = "cet";
+        BigInt::wrap(native::sci_get_balance(cet.as_ptr(), cet.len() as i32)) 
+    }
+}
+
+pub fn transfer(to_addr: &Vec<u8>, amt: &BigInt) {
+    unsafe {
+        native::sci_transfer(to_addr.as_ptr(), to_addr.len() as i32, amt.get_handle());
+    }
 }
 
 #[cfg(test)]

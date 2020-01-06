@@ -18,5 +18,5 @@ pub extern "C" fn deposit(amt: i64) {
 pub extern "C" fn withdraw(amt: i64) {
     let caller = athena::get_caller();
     let amt_big = BigInt::from_i64(amt);
-    // TODO
+    athena::transfer(&caller, &amt_big);
 }

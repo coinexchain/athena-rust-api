@@ -47,4 +47,8 @@ impl BigInt {
             native::is_ok(ok)
         }
     }
+
+    pub fn get_handle(&self) -> native::mpint_t {
+        self.handle
+    }
 }
