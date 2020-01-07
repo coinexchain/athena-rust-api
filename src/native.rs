@@ -1,5 +1,6 @@
 pub type int64_t = i64;
 pub type int32_t = i32;
+pub type bool_t = i32;
 pub type mpint_t = i32;
 pub type mpdec_t = i32;
 pub type iter_t = i32;
@@ -55,11 +56,16 @@ extern "C" {
     pub fn sci_mpint_allocate() -> mpint_t;
     pub fn sci_mpint_free(i: mpint_t);
     pub fn sci_mpint_to_string(i: mpint_t, len_ptr: size_ptr_t) -> ptr_t;
-    pub fn sci_mpint_from_string(i: mpint_t, str_ptr: ptr_t, str_len: int32_t) -> int32_t;
+    pub fn sci_mpint_from_string(i: mpint_t, str_ptr: ptr_t_ro, str_len: int32_t) -> int32_t;
+    pub fn sci_mpint_from_int64(i: mpint_t, val: int64_t) -> int32_t;
     pub fn sci_mpint_add(z: mpint_t, a: mpint_t, b: mpint_t);
     pub fn sci_mpint_sub(z: mpint_t, a: mpint_t, b: mpint_t);
     pub fn sci_mpint_mul(z: mpint_t, a: mpint_t, b: mpint_t);
-    pub fn sci_mpint_from_int64(i: mpint_t, val: int64_t) -> int32_t;
+    pub fn sci_mpint_eq(a: mpint_t, b: mpint_t) -> bool_t;
+    pub fn sci_mpint_gt(a: mpint_t, b: mpint_t) -> bool_t;
+    pub fn sci_mpint_gte(a: mpint_t, b: mpint_t) -> bool_t;
+    pub fn sci_mpint_lt(a: mpint_t, b: mpint_t) -> bool_t;
+    pub fn sci_mpint_lte(a: mpint_t, b: mpint_t) -> bool_t;
 
     // big dec
     pub fn sci_mpdec_allocate() -> mpdec_t;

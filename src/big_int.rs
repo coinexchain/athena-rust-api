@@ -21,6 +21,30 @@ impl BigInt {
         bi
     }
 
+    pub fn from_str(s: &str) -> Option<BigInt> {
+        unsafe {
+            let bi = BigInt::new();
+            let ok = native::sci_mpint_from_string(bi.handle, s.as_ptr(), s.len() as i32);
+            if native::is_ok(ok) {
+                Some(bi)
+            } else {
+                None
+            }
+        }
+    }
+
+    pub fn from_bytes(s: &[u8]) -> Option<BigInt> {
+        unsafe {
+            let bi = BigInt::new();
+            let ok = native::sci_mpint_from_string(bi.handle, s.as_ptr(), s.len() as i32);
+            if native::is_ok(ok) {
+                Some(bi)
+            } else {
+                None
+            }
+        }
+    }
+
     pub fn new() -> BigInt {
         unsafe {
             BigInt {
@@ -41,10 +65,53 @@ impl BigInt {
         unsafe { native::sci_mpint_mul(z.handle, a.handle, b.handle) }
     }
 
+    pub fn eq(&self, b: &BigInt) -> bool {
+        unsafe {
+            let ok = native::sci_mpint_eq(self.handle, b.handle);
+            native::is_ok(ok)
+        }
+    }
+
+    pub fn gt(&self, b: &BigInt) -> bool {
+        unsafe {
+            let ok = native::sci_mpint_gt(self.handle, b.handle);
+            native::is_ok(ok)
+        }
+    }
+
+    pub fn gte(&self, b: &BigInt) -> bool {
+        unsafe {
+            let ok = native::sci_mpint_gte(self.handle, b.handle);
+            native::is_ok(ok)
+        }
+    }
+
+    pub fn lt(&self, b: &BigInt) -> bool {
+        unsafe {
+            let ok = native::sci_mpint_lt(self.handle, b.handle);
+            native::is_ok(ok)
+        }
+    }
+
+    pub fn lte(&self, b: &BigInt) -> bool {
+        unsafe {
+            let ok = native::sci_mpint_lte(self.handle, b.handle);
+            native::is_ok(ok)
+        }
+    }
+
     pub fn set_i64(&self, n: i64) -> bool {
         unsafe {
             let ok = native::sci_mpint_from_int64(self.handle, n);
             native::is_ok(ok)
+        }
+    }
+
+    pub fn to_string(&self) -> String {
+        unsafe {
+            let mut str_len = 0i32;
+            let str_raw = native::sci_mpint_to_string(self.handle, &mut str_len);
+            String::from_raw_parts(str_raw, str_len as usize, str_len as usize)
         }
     }
 

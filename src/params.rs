@@ -46,9 +46,22 @@ pub fn get_string(idx: i32) -> Option<String> {
     unsafe {
         let mut len = 0i32;
         let mut ok = 0i32;
-        let str_raw = native::sci_param_to_string(idx, &mut len, &mut ok);
+        let data = native::sci_param_to_string(idx, &mut len, &mut ok);
         if native::is_ok(ok) {
-            Some(String::from_raw_parts(str_raw, len as usize, len as usize))
+            Some(String::from_raw_parts(data, len as usize, len as usize))
+        } else {
+            None
+        }
+    }
+}
+
+pub fn get_bytes(idx: i32) -> Option<Vec<u8>> {
+    unsafe {
+        let mut len = 0i32;
+        let mut ok = 0i32;
+        let data = native::sci_param_to_byteslice(idx, &mut len, &mut ok);
+        if native::is_ok(ok) {
+            Some(Vec::from_raw_parts(data, len as usize, len as usize))
         } else {
             None
         }

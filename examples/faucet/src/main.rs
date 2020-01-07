@@ -1,5 +1,5 @@
 use athena_rust_api as athena;
-use athena_rust_api::{native, BigInt};
+use athena_rust_api::BigInt;
 
 fn main() {
     // println!("Hello, world!");
