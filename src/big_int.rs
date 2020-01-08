@@ -15,6 +15,10 @@ impl BigInt {
         BigInt { handle: handle }
     }
 
+    pub fn zero() -> BigInt {
+        BigInt::from_i64(0)
+    }
+
     pub fn from_i64(n: i64) -> BigInt {
         let bi = BigInt::new();
         bi.set_i64(n);
@@ -22,15 +26,7 @@ impl BigInt {
     }
 
     pub fn from_str(s: &str) -> Option<BigInt> {
-        unsafe {
-            let bi = BigInt::new();
-            let ok = native::sci_mpint_from_string(bi.handle, s.as_ptr(), s.len() as i32);
-            if native::is_ok(ok) {
-                Some(bi)
-            } else {
-                None
-            }
-        }
+        BigInt::from_bytes(s.as_bytes())
     }
 
     pub fn from_bytes(s: &[u8]) -> Option<BigInt> {
@@ -53,16 +49,38 @@ impl BigInt {
         }
     }
 
-    pub fn add(z: &BigInt, a: &BigInt, b: &BigInt) {
-        unsafe { native::sci_mpint_add(z.handle, a.handle, b.handle) }
+    // pub fn add(z: &BigInt, a: &BigInt, b: &BigInt) {
+    //     unsafe { native::sci_mpint_add(z.handle, a.handle, b.handle) }
+    // }
+    // pub fn sub(z: &BigInt, a: &BigInt, b: &BigInt) {
+    //     unsafe { native::sci_mpint_sub(z.handle, a.handle, b.handle) }
+    // }
+    // pub fn mul(z: &BigInt, a: &BigInt, b: &BigInt) {
+    //     unsafe { native::sci_mpint_mul(z.handle, a.handle, b.handle) }
+    // }
+
+    pub fn add(&self, b: &BigInt) -> BigInt {
+        unsafe {
+            let c = BigInt::new();
+            native::sci_mpint_add(c.handle, self.handle, b.handle);
+            c
+        }
     }
 
-    pub fn sub(z: &BigInt, a: &BigInt, b: &BigInt) {
-        unsafe { native::sci_mpint_sub(z.handle, a.handle, b.handle) }
+    pub fn sub(&self, b: &BigInt) -> BigInt {
+        unsafe {
+            let c = BigInt::new();
+            native::sci_mpint_sub(c.handle, self.handle, b.handle);
+            c
+        }
     }
 
-    pub fn mul(z: &BigInt, a: &BigInt, b: &BigInt) {
-        unsafe { native::sci_mpint_mul(z.handle, a.handle, b.handle) }
+    pub fn mul(&self, b: &BigInt) -> BigInt {
+        unsafe {
+            let c = BigInt::new();
+            native::sci_mpint_mul(c.handle, self.handle, b.handle);
+            c
+        }
     }
 
     pub fn eq(&self, b: &BigInt) -> bool {

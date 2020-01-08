@@ -1,4 +1,5 @@
 mod big_int;
+pub mod events;
 pub mod kv;
 pub mod macros;
 pub mod native;

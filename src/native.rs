@@ -52,6 +52,11 @@ extern "C" {
     pub fn sci_kv_reverse_iterator_next(rev_iter: iter_t, res_ptr: iter_result_ptr_t);
     pub fn sci_kv_reverse_iterator_close(rev_iter: iter_t);
 
+    // events
+    pub fn sci_event_begin(evt_type: ptr_t_ro, evt_type_len: int32_t);
+    pub fn sci_event_add_attribute(key: ptr_t_ro, key_len: int32_t, value: ptr_t_ro, value_len: int32_t);
+    pub fn sci_event_end();
+
     // big int
     pub fn sci_mpint_allocate() -> mpint_t;
     pub fn sci_mpint_free(i: mpint_t);

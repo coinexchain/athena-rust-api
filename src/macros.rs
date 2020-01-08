@@ -42,6 +42,9 @@ macro_rules! get_param {
     ( $i:expr, i64 ) => {
         athena::params::get_i64($i).unwrap()
     };
+    ( $i:expr, bytes ) => {
+        athena::params::get_bytes($i).unwrap()
+    };
 }
 
 pub fn __arg_idx(idx: &mut i32) -> i32 {

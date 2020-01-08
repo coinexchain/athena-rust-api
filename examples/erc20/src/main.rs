@@ -7,23 +7,33 @@ fn main() {
 
 athena::sce_malloc!();
 
-athena::handle!(transfer(i64));
+athena::handle!(transfer(bytes, i64));
 
 // Given an address and amount, transfers that amount of tokens to that address,
 // from the balance of the address that executed the transfer.
 #[no_mangle]
-pub extern "C" fn transfer(amt: i64) {
+pub extern "C" fn transfer(to_addr: Vec<u8>, amt: i64) {
     if amt < 0 {
         return;
     }
 
     let amt_big = BigInt::from_i64(amt);
-    let caller = athena::get_caller();
-    let balance_bytes = kv::get(caller).unwrap();
-    let balance = BigInt::from_bytes(&balance_bytes).unwrap();
-    if balance.lt(&amt_big) {
+    let sender = athena::get_caller();
+    let sender_balance = get_balance(&sender);
+    if sender_balance.lt(&amt_big) {
         return;
     }
 
-    // TODO
+    let receiver_balance = get_balance(&to_addr);
+    sender_balance = sender_balance.sub(&amt_big);
+    receiver_balance = receiver_balance.add(&amt_big);
+}
+
+fn get_balance(addr: &Vec<u8>) -> BigInt {
+    let bytes = kv::get(addr);
+    if bytes.is_some() {
+        BigInt::from_bytes(&bytes.unwrap()).unwrap()
+    } else {
+        BigInt::zero()
+    }
 }
