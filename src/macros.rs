@@ -17,7 +17,7 @@ macro_rules! sce_malloc {
 macro_rules! handle {
     ( $( $f:ident ( $( $a:tt ),* ) ),* ) => {
         #[no_mangle]
-        pub extern "C" fn handle() {
+        pub extern "C" fn handle() -> i32 {
             let route = athena::get_route();
             if !athena::params::decode_as_cbor() {
                 panic!();
@@ -30,6 +30,7 @@ macro_rules! handle {
                     );
                 }
             )*
+            0
         }
     }
 }
