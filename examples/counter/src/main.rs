@@ -33,5 +33,6 @@ fn get_count() -> BigInt {
 }
 
 fn set_count(c: &BigInt) {
-    kv::set("__c".as_bytes(), c.to_string().as_bytes());
+    let s = c.to_string();
+    kv::set("__c".as_bytes(), s.as_bytes());
 }

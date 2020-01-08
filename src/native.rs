@@ -80,4 +80,7 @@ extern "C" {
     pub fn sci_mpdec_add(z: mpdec_t, a: mpdec_t, b: mpdec_t);
     pub fn sci_mpdec_sub(z: mpdec_t, a: mpdec_t, b: mpdec_t);
     pub fn sci_mpdec_mul(z: mpdec_t, a: mpdec_t, b: mpdec_t);
+
+    // debug
+    pub fn sci_print(str_ptr: ptr_t_ro, str_len: int32_t);
 }

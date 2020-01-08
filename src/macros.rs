@@ -30,7 +30,7 @@ macro_rules! handle {
                     );
                 }
             )*
-            0
+            1
         }
     }
 }

@@ -1,4 +1,5 @@
 mod big_int;
+mod debug;
 pub mod events;
 pub mod kv;
 pub mod macros;
@@ -6,6 +7,7 @@ pub mod native;
 pub mod params;
 
 pub use big_int::BigInt;
+pub use debug::println;
 
 pub type Address = Vec<u8>; // AccAddress
 
