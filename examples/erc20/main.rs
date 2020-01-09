@@ -25,8 +25,8 @@ pub extern "C" fn transfer(to_addr: Vec<u8>, amt: i64) {
     }
 
     let receiver_balance = get_balance(&to_addr);
-    sender_balance = sender_balance.sub(&amt_big);
-    receiver_balance = receiver_balance.add(&amt_big);
+    let sender_balance = sender_balance.sub(&amt_big);
+    let receiver_balance = receiver_balance.add(&amt_big);
 }
 
 fn get_balance(addr: &Vec<u8>) -> BigInt {

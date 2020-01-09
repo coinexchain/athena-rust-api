@@ -129,7 +129,11 @@ impl BigInt {
         unsafe {
             let mut str_len = 0i32;
             let str_raw = native::sci_mpint_to_string(self.handle, &mut str_len);
-            String::from_raw_parts(str_raw, str_len as usize, str_len as usize)
+            if str_raw as i32 == 0 {
+                String::from("???") // TODO
+            } else {
+                String::from_raw_parts(str_raw, str_len as usize, str_len as usize)
+            }
         }
     }
 

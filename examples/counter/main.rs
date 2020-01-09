@@ -11,10 +11,26 @@ athena::handle!(incr(i64), query());
 
 #[no_mangle]
 pub extern "C" fn incr(n: i64) {
-    let c = get_count();
-    let x = BigInt::from_i64(n);
-    let new_c = c.add(&x);
-    set_count(&new_c);
+    // let c = get_count();
+    // let x = BigInt::from_i64(n);
+    // let new_c = c.add(&x);
+    // athena::println("aaaa");
+    // set_count(&new_c);
+    // athena::println("bbbb");
+
+    athena::println("aaaa..");
+    test(n);
+    athena::println("bbbb..");
+}
+
+fn test(n: i64) {
+    let c = BigInt::from_i64(n);
+    {
+        let s = c.to_string();
+        athena::println(&s);
+        athena::println("test.. ??");
+    }
+    athena::println("test.. ok");
 }
 
 #[no_mangle]
