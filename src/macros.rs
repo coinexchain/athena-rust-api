@@ -52,3 +52,12 @@ pub fn __arg_idx(idx: &mut i32) -> i32 {
     *idx += 1;
     *idx - 1
 }
+
+#[macro_export]
+macro_rules! publish_event {
+    ($t:expr, $( $k:expr => $v:expr ),*) => {
+        athena::events::begin($t);
+        $( athena::events::add_attr($k, $v); )*
+        athena::events::end();
+    };
+}
