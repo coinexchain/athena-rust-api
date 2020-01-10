@@ -1,13 +1,11 @@
 use super::native;
 
 pub fn publish(evt_type: &str, attrs: &Vec<(&str, &str)>) {
-    unsafe {
-        begin(evt_type);
-        for kv in attrs {
-            add_attr(kv.0, kv.1);
-        }
-        end();
+    begin(evt_type);
+    for kv in attrs {
+        add_attr(kv.0, kv.1);
     }
+    end();
 }
 
 pub fn begin(evt_type: &str) {

@@ -18,52 +18,26 @@ pub fn count() -> i32 {
     unsafe { native::sci_param_count() }
 }
 
-pub fn get_i32(idx: i32) -> Option<i32> {
-    unsafe {
-        let mut ok = 0i32;
-        let val = native::sci_param_to_int32(idx, &mut ok);
-        if native::is_ok(ok) {
-            Some(val)
-        } else {
-            None
-        }
-    }
+pub fn get_i32(idx: i32) -> i32 {
+    unsafe { native::sci_param_to_int32(idx) }
 }
 
-pub fn get_i64(idx: i32) -> Option<i64> {
-    unsafe {
-        let mut ok = 0i32;
-        let val = native::sci_param_to_int64(idx, &mut ok);
-        if native::is_ok(ok) {
-            Some(val)
-        } else {
-            None
-        }
-    }
+pub fn get_i64(idx: i32) -> i64 {
+    unsafe { native::sci_param_to_int64(idx) }
 }
 
-pub fn get_string(idx: i32) -> Option<String> {
+pub fn get_string(idx: i32) -> String {
     unsafe {
         let mut len = 0i32;
-        let mut ok = 0i32;
-        let data = native::sci_param_to_string(idx, &mut len, &mut ok);
-        if native::is_ok(ok) {
-            Some(String::from_raw_parts(data, len as usize, len as usize))
-        } else {
-            None
-        }
+        let data = native::sci_param_to_string(idx, &mut len);
+        String::from_raw_parts(data, len as usize, len as usize)
     }
 }
 
-pub fn get_bytes(idx: i32) -> Option<Vec<u8>> {
+pub fn get_bytes(idx: i32) -> Vec<u8> {
     unsafe {
         let mut len = 0i32;
-        let mut ok = 0i32;
-        let data = native::sci_param_to_byteslice(idx, &mut len, &mut ok);
-        if native::is_ok(ok) {
-            Some(Vec::from_raw_parts(data, len as usize, len as usize))
-        } else {
-            None
-        }
+        let data = native::sci_param_to_byteslice(idx, &mut len);
+        Vec::from_raw_parts(data, len as usize, len as usize)
     }
 }

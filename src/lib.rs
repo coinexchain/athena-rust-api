@@ -45,13 +45,7 @@ pub fn get_balance() -> BigInt {
 pub fn transfer(to_addr: &Vec<u8>, amt: &BigInt) {
     unsafe {
         let cet = "cet";
-        native::sci_transfer(
-            to_addr.as_ptr(),
-            to_addr.len() as i32,
-            cet.as_ptr(),
-            cet.len() as i32,
-            amt.get_handle(),
-        );
+        native::sci_transfer(to_addr.as_ptr(), cet.as_ptr(), cet.len() as i32, amt.get_handle());
     }
 }
 

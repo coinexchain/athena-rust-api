@@ -19,18 +19,11 @@ pub extern "C" fn incr(n: i64) {
     // athena::println("bbbb");
 
     athena::println("aaaa..");
-    test(n);
-    athena::println("bbbb..");
-}
-
-fn test(n: i64) {
-    let c = BigInt::from_i64(n);
     {
+        let c = BigInt::from_i64(n);
         let s = c.to_string();
-        athena::println(&s);
-        athena::println("test.. ??");
     }
-    athena::println("test.. ok");
+    athena::println("bbbb..");
 }
 
 #[no_mangle]
@@ -44,7 +37,7 @@ fn get_count() -> BigInt {
     if c.is_none() {
         BigInt::zero()
     } else {
-        BigInt::from_bytes(&c.unwrap()).unwrap()
+        BigInt::from_bytes(&c.unwrap())
     }
 }
 

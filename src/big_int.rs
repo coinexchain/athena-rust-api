@@ -25,19 +25,15 @@ impl BigInt {
         bi
     }
 
-    pub fn from_str(s: &str) -> Option<BigInt> {
+    pub fn from_str(s: &str) -> BigInt {
         BigInt::from_bytes(s.as_bytes())
     }
 
-    pub fn from_bytes(s: &[u8]) -> Option<BigInt> {
+    pub fn from_bytes(s: &[u8]) -> BigInt {
         unsafe {
             let bi = BigInt::new();
-            let ok = native::sci_mpint_from_string(bi.handle, s.as_ptr(), s.len() as i32);
-            if native::is_ok(ok) {
-                Some(bi)
-            } else {
-                None
-            }
+            native::sci_mpint_from_string(bi.handle, s.as_ptr(), s.len() as i32);
+            bi
         }
     }
 
@@ -118,11 +114,8 @@ impl BigInt {
         }
     }
 
-    pub fn set_i64(&self, n: i64) -> bool {
-        unsafe {
-            let ok = native::sci_mpint_from_int64(self.handle, n);
-            native::is_ok(ok)
-        }
+    pub fn set_i64(&self, n: i64) {
+        unsafe { native::sci_mpint_from_int64(self.handle, n) }
     }
 
     pub fn to_string(&self) -> String {

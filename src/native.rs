@@ -18,7 +18,7 @@ pub fn is_ok(ret: i32) -> bool {
 
 extern "C" {
     pub fn sci_get_balance(denom_ptr: ptr_t_ro, denom_len: int32_t) -> mpint_t;
-    pub fn sci_transfer(to_addr: ptr_t_ro, to_addr_len: int32_t, denom_ptr: ptr_t_ro, denom_len: int32_t, amt: mpint_t);
+    pub fn sci_transfer(to_addr: ptr_t_ro, denom_ptr: ptr_t_ro, denom_len: int32_t, amt: mpint_t);
 
     // route & params
     pub fn sci_get_route_string(len_ptr: size_ptr_t) -> ptr_t;
@@ -26,11 +26,11 @@ extern "C" {
     pub fn sci_param_decode_as_json() -> int32_t;
     pub fn sci_param_count() -> int32_t;
     pub fn sci_get_param_addr(len_ptr: size_ptr_t) -> ptr_t;
-    pub fn sci_param_to_int64(n: int32_t, ok: bool_ptr_t) -> int64_t;
-    pub fn sci_param_to_int32(n: int32_t, ok: bool_ptr_t) -> int32_t;
-    pub fn sci_param_to_string(n: int32_t, len_ptr: size_ptr_t, ok: bool_ptr_t) -> ptr_t;
-    pub fn sci_param_to_byteslice(n: int32_t, len_ptr: size_ptr_t, ok: bool_ptr_t) -> ptr_t;
-    pub fn sci_param_to_int64_array(n: int32_t, len_ptr: size_ptr_t, ok: bool_ptr_t) -> int64_ptr_t;
+    pub fn sci_param_to_int64(n: int32_t) -> int64_t;
+    pub fn sci_param_to_int32(n: int32_t) -> int32_t;
+    pub fn sci_param_to_string(n: int32_t, len_ptr: size_ptr_t) -> ptr_t;
+    pub fn sci_param_to_byteslice(n: int32_t, len_ptr: size_ptr_t) -> ptr_t;
+    pub fn sci_param_to_int64_array(n: int32_t, len_ptr: size_ptr_t) -> int64_ptr_t;
 
     // env
     pub fn sci_get_caller(len_ptr: size_ptr_t) -> ptr_t;
@@ -61,8 +61,8 @@ extern "C" {
     pub fn sci_mpint_allocate() -> mpint_t;
     pub fn sci_mpint_free(i: mpint_t);
     pub fn sci_mpint_to_string(i: mpint_t, len_ptr: size_ptr_t) -> ptr_t;
-    pub fn sci_mpint_from_string(i: mpint_t, str_ptr: ptr_t_ro, str_len: int32_t) -> int32_t;
-    pub fn sci_mpint_from_int64(i: mpint_t, val: int64_t) -> int32_t;
+    pub fn sci_mpint_from_string(i: mpint_t, str_ptr: ptr_t_ro, str_len: int32_t);
+    pub fn sci_mpint_from_int64(i: mpint_t, val: int64_t);
     pub fn sci_mpint_add(z: mpint_t, a: mpint_t, b: mpint_t);
     pub fn sci_mpint_sub(z: mpint_t, a: mpint_t, b: mpint_t);
     pub fn sci_mpint_mul(z: mpint_t, a: mpint_t, b: mpint_t);
@@ -76,7 +76,7 @@ extern "C" {
     pub fn sci_mpdec_allocate() -> mpdec_t;
     pub fn sci_mpdec_free(i: mpdec_t);
     pub fn sci_mpdec_to_string(i: mpdec_t, len_ptr: size_ptr_t) -> ptr_t;
-    pub fn sci_mpdec_from_string(i: mpdec_t, str_ptr: ptr_t, str_len: int32_t) -> int32_t;
+    pub fn sci_mpdec_from_string(i: mpdec_t, str_ptr: ptr_t, str_len: int32_t);
     pub fn sci_mpdec_add(z: mpdec_t, a: mpdec_t, b: mpdec_t);
     pub fn sci_mpdec_sub(z: mpdec_t, a: mpdec_t, b: mpdec_t);
     pub fn sci_mpdec_mul(z: mpdec_t, a: mpdec_t, b: mpdec_t);

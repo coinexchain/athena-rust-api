@@ -32,7 +32,7 @@ pub extern "C" fn transfer(to_addr: Vec<u8>, amt: i64) {
 fn get_balance(addr: &Vec<u8>) -> BigInt {
     let bytes = kv::get(addr);
     if bytes.is_some() {
-        BigInt::from_bytes(&bytes.unwrap()).unwrap()
+        BigInt::from_bytes(&bytes.unwrap())
     } else {
         BigInt::zero()
     }

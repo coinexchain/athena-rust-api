@@ -38,13 +38,13 @@ macro_rules! handle {
 #[macro_export]
 macro_rules! get_param {
     ( $i:expr, i32 ) => {
-        athena::params::get_i32($i).unwrap()
+        athena::params::get_i32($i)
     };
     ( $i:expr, i64 ) => {
-        athena::params::get_i64($i).unwrap()
+        athena::params::get_i64($i)
     };
     ( $i:expr, bytes ) => {
-        athena::params::get_bytes($i).unwrap()
+        athena::params::get_bytes($i)
     };
 }
 
