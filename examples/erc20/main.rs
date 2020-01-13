@@ -12,7 +12,7 @@ athena::handle!(transfer(bytes, i64));
 // Given an address and amount, transfers that amount of tokens to that address,
 // from the balance of the address that executed the transfer.
 #[no_mangle]
-pub extern "C" fn transfer(to_addr: Vec<u8>, amt: i64) {
+pub extern "C" fn transfer(to_addr: &[u8], amt: i64) {
     if amt < 0 {
         return;
     }
@@ -29,7 +29,7 @@ pub extern "C" fn transfer(to_addr: Vec<u8>, amt: i64) {
     let receiver_balance = receiver_balance.add(&amt_big);
 }
 
-fn get_balance(addr: &Vec<u8>) -> BigInt {
+fn get_balance(addr: &[u8]) -> BigInt {
     let bytes = kv::get(addr);
     if bytes.is_some() {
         BigInt::from_bytes(&bytes.unwrap())

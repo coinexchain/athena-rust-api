@@ -9,29 +9,33 @@ pub mod params;
 pub use big_int::BigInt;
 pub use debug::println;
 
-pub type Address = Vec<u8>; // AccAddress
+// pub type Address = &'[u8]; // AccAddress
 
-pub fn get_route() -> String {
+pub fn get_route() -> &'static str {
     unsafe {
         let mut len: i32 = 0;
-        let route_raw = native::sci_get_route_string(&mut len);
-        String::from_raw_parts(route_raw, len as usize, len as usize)
+        let ptr = native::sci_get_route_string(&mut len);
+        let bytes: &'static [u8] = std::slice::from_raw_parts(ptr, len as usize);
+        let s: &'static str = std::str::from_utf8_unchecked(bytes);
+        s
     }
 }
 
-pub fn get_caller() -> Vec<u8> {
+pub fn get_caller() -> &'static [u8] {
     unsafe {
-        let mut addr_len: i32 = 0;
-        let addr_raw = native::sci_get_caller(&mut addr_len);
-        Vec::from_raw_parts(addr_raw, addr_len as usize, addr_len as usize)
+        let mut len: i32 = 0;
+        let ptr = native::sci_get_caller(&mut len);
+        let bytes: &'static [u8] = std::slice::from_raw_parts(ptr, len as usize);
+        bytes
     }
 }
 
-pub fn get_creator() -> Vec<u8> {
+pub fn get_creator() -> &'static [u8] {
     unsafe {
-        let mut addr_len: i32 = 0;
-        let addr_raw = native::sci_get_creator(&mut addr_len);
-        Vec::from_raw_parts(addr_raw, addr_len as usize, addr_len as usize)
+        let mut len: i32 = 0;
+        let ptr = native::sci_get_creator(&mut len);
+        let bytes: &'static [u8] = std::slice::from_raw_parts(ptr, len as usize);
+        bytes
     }
 }
 
@@ -42,7 +46,7 @@ pub fn get_balance() -> BigInt {
     }
 }
 
-pub fn transfer(to_addr: &Vec<u8>, amt: &BigInt) {
+pub fn transfer(to_addr: &[u8], amt: &BigInt) {
     unsafe {
         let cet = "cet";
         native::sci_transfer(to_addr.as_ptr(), cet.as_ptr(), cet.len() as i32, amt.get_handle());

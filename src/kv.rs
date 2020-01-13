@@ -1,12 +1,12 @@
 use super::native;
 
-pub fn get(key: &[u8]) -> Option<Vec<u8>> {
+pub fn get(key: &[u8]) -> Option<&'static [u8]> {
     unsafe {
-        let mut val_len = 0i32;
-        let val_raw = native::sci_kv_get(key.as_ptr(), key.len() as i32, &mut val_len);
-        if val_raw as usize > 0 {
-            let val = Vec::from_raw_parts(val_raw, val_len as usize, val_len as usize);
-            Some(val)
+        let mut len = 0i32;
+        let ptr = native::sci_kv_get(key.as_ptr(), key.len() as i32, &mut len);
+        if ptr as usize > 0 {
+            let bytes: &'static [u8] = std::slice::from_raw_parts(ptr, len as usize);
+            Some(bytes)
         } else {
             None
         }
