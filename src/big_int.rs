@@ -118,15 +118,13 @@ impl BigInt {
         unsafe { native::sci_mpint_from_int64(self.handle, n) }
     }
 
-    pub fn to_string(&self) -> String {
+    pub fn to_string(&self) -> &'static str {
         unsafe {
-            let mut str_len = 0i32;
-            let str_raw = native::sci_mpint_to_string(self.handle, &mut str_len);
-            if str_raw as i32 == 0 {
-                String::from("???") // TODO
-            } else {
-                String::from_raw_parts(str_raw, str_len as usize, str_len as usize)
-            }
+            let mut len = 0i32;
+            let ptr = native::sci_mpint_to_string(self.handle, &mut len);
+            let bytes = std::slice::from_raw_parts(ptr, len as usize);
+            let s: &'static str = std::str::from_utf8_unchecked(bytes);
+            s
         }
     }
 
