@@ -11,22 +11,10 @@ athena::handle!(incr(i64), query());
 
 #[no_mangle]
 pub extern "C" fn incr(n: i64) {
-    // let c = get_count();
-    // let x = BigInt::from_i64(n);
-    // let new_c = c.add(&x);
-    // athena::println("aaaa");
-    // set_count(&new_c);
-    // athena::println("bbbb");
-
-    athena::println("aaaa..");
-    {
-        let c = BigInt::from_i64(n);
-        for n in 0..1000 {
-            let s = c.to_string();
-            let v: Vec<u8> = Vec::with_capacity(100);
-        }
-    }
-    athena::println("bbbb..");
+    let c = get_count();
+    let x = BigInt::from_i64(n);
+    let new_c = c.add(&x);
+    set_count(&new_c);
 }
 
 #[no_mangle]
