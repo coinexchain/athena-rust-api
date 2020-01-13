@@ -18,9 +18,7 @@ pub fn get_route() -> HostStr {
     unsafe {
         let mut len: i32 = 0;
         let ptr = native::sci_get_route_string(&mut len);
-        let bytes: HostData = std::slice::from_raw_parts(ptr, len as usize);
-        let s: HostStr = std::str::from_utf8_unchecked(bytes);
-        s
+        String::from_raw_parts(ptr, len as usize, len as usize).as_str()
     }
 }
 
