@@ -118,7 +118,7 @@ impl BigInt {
         unsafe { native::sci_mpint_from_int64(self.handle, n) }
     }
 
-    pub fn to_string(&self) -> HostStr {
+    pub fn to_str(&self) -> HostStr {
         unsafe {
             let mut len = 0i32;
             let ptr = native::sci_mpint_to_string(self.handle, &mut len);

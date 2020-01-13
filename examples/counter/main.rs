@@ -19,8 +19,8 @@ pub extern "C" fn incr(n: i64) {
 
 #[no_mangle]
 pub extern "C" fn query() {
-    let c = get_count().to_string();
-    events::publish("counter", &[("count", &c)]);
+    let c = get_count().to_str();
+    events::publish("counter", &[("count", c)]);
 }
 
 fn get_count() -> BigInt {
@@ -33,6 +33,6 @@ fn get_count() -> BigInt {
 }
 
 fn set_count(c: &BigInt) {
-    let s = c.to_string();
+    let s = c.to_str();
     kv::set("__c".as_bytes(), s.as_bytes());
 }

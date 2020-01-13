@@ -1,5 +1,22 @@
 use super::{native, HostData, HostStr};
 
+pub fn get_str(key: &str) -> Option<HostStr> {
+    let bytes = get(key.as_bytes());
+    if bytes.is_some() {
+        unsafe { Some(std::str::from_utf8_unchecked(bytes.unwrap())) }
+    } else {
+        None
+    }
+}
+
+pub fn set_str(key: &str, val: &str) {
+    set(key.as_bytes(), val.as_bytes());
+}
+
+pub fn del_str(key: &str) {
+    del(key.as_bytes());
+}
+
 pub fn get(key: &[u8]) -> Option<HostData> {
     unsafe {
         let mut len = 0i32;
