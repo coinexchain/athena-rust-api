@@ -32,7 +32,7 @@ pub extern "C" fn incr(n: i64) {
 #[no_mangle]
 pub extern "C" fn query() {
     let c = get_count().to_string();
-    events::publish("counter", &vec![("count", &c)]);
+    events::publish("counter", &[("count", &c)]);
 }
 
 fn get_count() -> BigInt {

@@ -1,4 +1,4 @@
-use super::native;
+use super::{native, HostStr};
 
 pub struct BigInt {
     handle: native::mpint_t,
@@ -118,12 +118,12 @@ impl BigInt {
         unsafe { native::sci_mpint_from_int64(self.handle, n) }
     }
 
-    pub fn to_string(&self) -> &'static str {
+    pub fn to_string(&self) -> HostStr {
         unsafe {
             let mut len = 0i32;
             let ptr = native::sci_mpint_to_string(self.handle, &mut len);
             let bytes = std::slice::from_raw_parts(ptr, len as usize);
-            let s: &'static str = std::str::from_utf8_unchecked(bytes);
+            let s: HostStr = std::str::from_utf8_unchecked(bytes);
             s
         }
     }

@@ -1,6 +1,6 @@
 use super::native;
 
-pub fn publish(evt_type: &str, attrs: &Vec<(&str, &str)>) {
+pub fn publish(evt_type: &str, attrs: &[(&str, &str)]) {
     begin(evt_type);
     for kv in attrs {
         add_attr(kv.0, kv.1);

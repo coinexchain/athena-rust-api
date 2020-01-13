@@ -1,11 +1,11 @@
-use super::native;
+use super::{native, HostData, HostStr};
 
-pub fn get(key: &[u8]) -> Option<&'static [u8]> {
+pub fn get(key: &[u8]) -> Option<HostData> {
     unsafe {
         let mut len = 0i32;
         let ptr = native::sci_kv_get(key.as_ptr(), key.len() as i32, &mut len);
         if ptr as usize > 0 {
-            let bytes: &'static [u8] = std::slice::from_raw_parts(ptr, len as usize);
+            let bytes: HostData = std::slice::from_raw_parts(ptr, len as usize);
             Some(bytes)
         } else {
             None

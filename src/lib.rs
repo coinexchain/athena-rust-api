@@ -11,30 +11,33 @@ pub use debug::println;
 
 // pub type Address = &'[u8]; // AccAddress
 
-pub fn get_route() -> &'static str {
+pub type HostData = &'static [u8];
+pub type HostStr = &'static str;
+
+pub fn get_route() -> HostStr {
     unsafe {
         let mut len: i32 = 0;
         let ptr = native::sci_get_route_string(&mut len);
-        let bytes: &'static [u8] = std::slice::from_raw_parts(ptr, len as usize);
-        let s: &'static str = std::str::from_utf8_unchecked(bytes);
+        let bytes: HostData = std::slice::from_raw_parts(ptr, len as usize);
+        let s: HostStr = std::str::from_utf8_unchecked(bytes);
         s
     }
 }
 
-pub fn get_caller() -> &'static [u8] {
+pub fn get_caller() -> HostData {
     unsafe {
         let mut len: i32 = 0;
         let ptr = native::sci_get_caller(&mut len);
-        let bytes: &'static [u8] = std::slice::from_raw_parts(ptr, len as usize);
+        let bytes: HostData = std::slice::from_raw_parts(ptr, len as usize);
         bytes
     }
 }
 
-pub fn get_creator() -> &'static [u8] {
+pub fn get_creator() -> HostData {
     unsafe {
         let mut len: i32 = 0;
         let ptr = native::sci_get_creator(&mut len);
-        let bytes: &'static [u8] = std::slice::from_raw_parts(ptr, len as usize);
+        let bytes: HostData = std::slice::from_raw_parts(ptr, len as usize);
         bytes
     }
 }
