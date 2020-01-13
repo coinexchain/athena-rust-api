@@ -30,9 +30,7 @@ pub fn get_str(idx: i32) -> HostStr {
     unsafe {
         let mut len = 0i32;
         let ptr = native::sci_param_to_string(idx, &mut len);
-        let bytes: HostData = std::slice::from_raw_parts(ptr, len as usize);
-        let s: HostStr = std::str::from_utf8_unchecked(bytes);
-        s
+        String::from_raw_parts(ptr, len as usize, len as usize).as_str()
     }
 }
 
