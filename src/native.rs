@@ -20,6 +20,10 @@ extern "C" {
     pub fn sci_get_balance(denom_ptr: ptr_t_ro, denom_len: int32_t) -> mpint_t;
     pub fn sci_transfer(to_addr: ptr_t_ro, denom_ptr: ptr_t_ro, denom_len: int32_t, amt: mpint_t);
 
+    // address
+    pub fn sci_address_from_bech32(bech32_ptr: ptr_t_ro, bech32_len: int32_t, addr_len_ptr: size_ptr_t) -> ptr_t;
+    pub fn sci_address_to_bech32(addr_ptr: ptr_t_ro, addr_len: int32_t, bech32_len_ptr: size_ptr_t) -> ptr_t;
+
     // route & params
     pub fn sci_get_route_string(len_ptr: size_ptr_t) -> ptr_t;
     pub fn sci_param_decode_as_cbor() -> int32_t;

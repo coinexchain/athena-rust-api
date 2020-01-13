@@ -26,7 +26,7 @@ pub fn get_i64(idx: i32) -> i64 {
     unsafe { native::sci_param_to_int64(idx) }
 }
 
-pub fn get_string(idx: i32) -> HostStr {
+pub fn get_str(idx: i32) -> HostStr {
     unsafe {
         let mut len = 0i32;
         let ptr = native::sci_param_to_string(idx, &mut len);

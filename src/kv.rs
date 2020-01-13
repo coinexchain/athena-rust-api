@@ -21,7 +21,7 @@ pub fn get(key: &[u8]) -> Option<HostData> {
     unsafe {
         let mut len = 0i32;
         let ptr = native::sci_kv_get(key.as_ptr(), key.len() as i32, &mut len);
-        if ptr as usize > 0 {
+        if ptr as i32 > 0 {
             let bytes: HostData = std::slice::from_raw_parts(ptr, len as usize);
             Some(bytes)
         } else {

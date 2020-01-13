@@ -46,8 +46,11 @@ macro_rules! get_param {
     ( $i:expr, bytes ) => {
         athena::params::get_bytes($i)
     };
-    ( $i:expr, addr ) => {
-        athena::params::get_bytes($i)
+    ( $i:expr, str ) => {
+        athena::params::get_str($i)
+    };
+    ( $i:expr, bech32 ) => {
+        athena::params::get_str($i)
     };
 }
 
