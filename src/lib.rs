@@ -29,18 +29,16 @@ pub fn get_caller_bech32() -> HostStr {
 
 pub fn get_caller() -> HostData {
     unsafe {
-        let mut len: i32 = 0;
-        let ptr = native::sci_get_caller(&mut len);
-        let bytes: HostData = std::slice::from_raw_parts(ptr, len as usize);
+        let ptr = native::sci_get_caller();
+        let bytes: HostData = std::slice::from_raw_parts(ptr, native::ADDR_LEN);
         bytes
     }
 }
 
 pub fn get_creator() -> HostData {
     unsafe {
-        let mut len: i32 = 0;
-        let ptr = native::sci_get_creator(&mut len);
-        let bytes: HostData = std::slice::from_raw_parts(ptr, len as usize);
+        let ptr = native::sci_get_creator();
+        let bytes: HostData = std::slice::from_raw_parts(ptr, native::ADDR_LEN);
         bytes
     }
 }
@@ -61,10 +59,9 @@ pub fn transfer(to_addr: &[u8], amt: &BigInt) {
 
 pub fn addr_from_bech32(s: &str) -> Option<HostData> {
     unsafe {
-        let mut len = 0i32;
-        let ptr = native::sci_address_from_bech32(s.as_ptr(), s.len() as i32, &mut len);
+        let ptr = native::sci_address_from_bech32(s.as_ptr(), s.len() as i32);
         if ptr as i32 > 0 {
-            Some(std::slice::from_raw_parts(ptr, len as usize))
+            Some(std::slice::from_raw_parts(ptr, native::ADDR_LEN))
         } else {
             None
         }
@@ -73,7 +70,7 @@ pub fn addr_from_bech32(s: &str) -> Option<HostData> {
 pub fn addr_to_bech32(addr: HostData) -> Option<HostStr> {
     unsafe {
         let mut len = 0i32;
-        let ptr = native::sci_address_to_bech32(addr.as_ptr(), addr.len() as i32, &mut len);
+        let ptr = native::sci_address_to_bech32(addr.as_ptr(), &mut len);
         if ptr as i32 > 0 {
             let bytes = std::slice::from_raw_parts(ptr, len as usize);
             let s: HostStr = std::str::from_utf8_unchecked(bytes);
