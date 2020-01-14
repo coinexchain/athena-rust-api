@@ -10,7 +10,7 @@ athena::sce_malloc!();
 athena::handle!(deposit(i64), withdraw(i64));
 
 #[no_mangle]
-pub extern "C" fn deposit(amt: i64) {
+pub extern "C" fn deposit(_amt: i64) {
     // TODO
 }
 
