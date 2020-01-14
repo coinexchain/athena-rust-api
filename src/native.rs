@@ -90,6 +90,5 @@ extern "C" {
     // debug
     pub fn sci_print(str_ptr: ptr_t_ro, str_len: int32_t);
     pub fn sci_println(str_ptr: ptr_t_ro, str_len: int32_t);
-    pub fn sci_print_int32(i: int32_t);
     pub fn sci_print_int64(i: int64_t);
 }

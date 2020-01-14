@@ -11,12 +11,6 @@ pub fn println(msg: &str) {
     }
 }
 
-pub fn print_i32(i: i32) {
-    unsafe {
-        native::sci_print_int32(i);
-    }
-}
-
 pub fn print_i64(i: i64) {
     unsafe {
         native::sci_print_int64(i);
