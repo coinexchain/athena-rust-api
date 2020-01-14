@@ -1,8 +1,13 @@
 use super::native;
 
+pub fn print(msg: &str) {
+    unsafe {
+        native::sci_print(msg.as_ptr(), msg.len() as i32);
+    }
+}
 pub fn println(msg: &str) {
     unsafe {
-        native::sci_print_str(msg.as_ptr(), msg.len() as i32);
+        native::sci_println(msg.as_ptr(), msg.len() as i32);
     }
 }
 
