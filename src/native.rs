@@ -9,7 +9,7 @@ pub type int64_ptr_t = *mut i64;
 pub type size_ptr_t = *mut i32;
 pub type bool_ptr_t = *mut i32;
 pub type ptr_t = *mut u8;
-pub type ptr_t_ro = *const u8;
+pub type ptr_ro = *const u8;
 pub type iter_result_ptr_t = *mut u8;
 
 pub const ADDR_LEN: usize = 20;
@@ -19,12 +19,12 @@ pub fn is_ok(ret: i32) -> bool {
 }
 
 extern "C" {
-    pub fn sci_get_balance(denom_ptr: ptr_t_ro, denom_len: int32_t) -> mpint_t;
-    pub fn sci_transfer(to_addr: ptr_t_ro, denom_ptr: ptr_t_ro, denom_len: int32_t, amt: mpint_t);
+    pub fn sci_get_balance(denom_ptr: ptr_ro, denom_len: int32_t) -> mpint_t;
+    pub fn sci_transfer(to_addr: ptr_ro, denom_ptr: ptr_ro, denom_len: int32_t, amt: mpint_t);
 
     // address
-    pub fn sci_address_from_bech32(bech32_ptr: ptr_t_ro, bech32_len: int32_t) -> ptr_t;
-    pub fn sci_address_to_bech32(addr_ptr: ptr_t_ro, bech32_len_ptr: size_ptr_t) -> ptr_t;
+    pub fn sci_address_from_bech32(bech32_ptr: ptr_ro, bech32_len: int32_t) -> ptr_t;
+    pub fn sci_address_to_bech32(addr_ptr: ptr_ro, bech32_len_ptr: size_ptr_t) -> ptr_t;
 
     // route & params
     pub fn sci_get_route_string(len_ptr: size_ptr_t) -> ptr_t;
@@ -48,9 +48,9 @@ extern "C" {
     // pub fn sci_get_gas_remained() -> int64_t;
 
     // KV store
-    pub fn sci_kv_get(key: ptr_t_ro, key_len: int32_t, value_len: size_ptr_t) -> ptr_t;
-    pub fn sci_kv_set(key: ptr_t_ro, key_len: int32_t, value: ptr_t_ro, value_len: int32_t);
-    pub fn sci_kv_erase(key: ptr_t_ro, key_len: int32_t);
+    pub fn sci_kv_get(key: ptr_ro, key_len: int32_t, value_len: size_ptr_t) -> ptr_t;
+    pub fn sci_kv_set(key: ptr_ro, key_len: int32_t, value: ptr_ro, value_len: int32_t);
+    pub fn sci_kv_erase(key: ptr_ro, key_len: int32_t);
     pub fn sci_kv_iterator(start: ptr_t, start_len: int32_t, end: ptr_t, end_len: int32_t) -> iter_t;
     pub fn sci_kv_iterator_next(iter: iter_t, res_ptr: iter_result_ptr_t);
     pub fn sci_kv_iterator_close(iter: iter_t);
@@ -59,15 +59,15 @@ extern "C" {
     pub fn sci_kv_reverse_iterator_close(rev_iter: iter_t);
 
     // events
-    pub fn sci_event_begin(evt_type: ptr_t_ro, evt_type_len: int32_t);
-    pub fn sci_event_add_attribute(key: ptr_t_ro, key_len: int32_t, value: ptr_t_ro, value_len: int32_t);
+    pub fn sci_event_begin(evt_type: ptr_ro, evt_type_len: int32_t);
+    pub fn sci_event_add_attribute(key: ptr_ro, key_len: int32_t, value: ptr_ro, value_len: int32_t);
     pub fn sci_event_end();
 
     // big int
     pub fn sci_mpint_allocate() -> mpint_t;
     pub fn sci_mpint_free(i: mpint_t);
     pub fn sci_mpint_to_string(i: mpint_t, len_ptr: size_ptr_t) -> ptr_t;
-    pub fn sci_mpint_from_string(i: mpint_t, str_ptr: ptr_t_ro, str_len: int32_t);
+    pub fn sci_mpint_from_string(i: mpint_t, str_ptr: ptr_ro, str_len: int32_t);
     pub fn sci_mpint_from_int64(i: mpint_t, val: int64_t);
     pub fn sci_mpint_add(z: mpint_t, a: mpint_t, b: mpint_t);
     pub fn sci_mpint_sub(z: mpint_t, a: mpint_t, b: mpint_t);
@@ -87,8 +87,15 @@ extern "C" {
     pub fn sci_mpdec_sub(z: mpdec_t, a: mpdec_t, b: mpdec_t);
     pub fn sci_mpdec_mul(z: mpdec_t, a: mpdec_t, b: mpdec_t);
 
+    // crypto
+    pub fn sci_verifysig(addr: ptr_ro, digest: ptr_ro, digest_len: int32_t, sig: ptr_ro, sig_len: int32_t) -> int32_t;
+    pub fn sci_sha256(data: ptr_ro, data_len: int32_t) -> ptr_t;
+    pub fn sci_sha256_begin();
+    pub fn sci_sha256_write(data: int32_t, dataLen: int32_t);
+    pub fn sci_sha256_sum() -> ptr_t;
+
     // debug
-    pub fn sci_print(str_ptr: ptr_t_ro, str_len: int32_t);
-    pub fn sci_println(str_ptr: ptr_t_ro, str_len: int32_t);
+    pub fn sci_print(str_ptr: ptr_ro, str_len: int32_t);
+    pub fn sci_println(str_ptr: ptr_ro, str_len: int32_t);
     pub fn sci_print_int64(i: int64_t);
 }

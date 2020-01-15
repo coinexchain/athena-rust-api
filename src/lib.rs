@@ -2,6 +2,7 @@ mod big_int;
 mod debug;
 
 pub mod block;
+pub mod crypto;
 pub mod events;
 pub mod kv;
 pub mod macros;
@@ -14,7 +15,7 @@ pub use debug::println;
 pub type HostData = &'static [u8];
 pub type HostStr = &'static str;
 
-pub type Address = HostData; // AccAddress
+// pub type Address<'a> = &'a [u8]; // AccAddress
 
 pub fn get_route() -> HostStr {
     unsafe {
