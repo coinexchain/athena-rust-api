@@ -1,5 +1,7 @@
 mod big_int;
 mod debug;
+
+pub mod block;
 pub mod events;
 pub mod kv;
 pub mod macros;

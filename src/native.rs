@@ -44,8 +44,8 @@ extern "C" {
     pub fn sci_get_height() -> int64_t;
     pub fn sci_get_data_hash(len_ptr: size_ptr_t) -> ptr_t;
     pub fn sci_get_timestamp(sec_ptr: int64_ptr_t, nanosec_ptr: int64_ptr_t);
-    pub fn sci_get_gas_limit() -> int64_t;
-    pub fn sci_get_gas_remained() -> int64_t;
+    // pub fn sci_get_gas_limit() -> int64_t;
+    // pub fn sci_get_gas_remained() -> int64_t;
 
     // KV store
     pub fn sci_kv_get(key: ptr_t_ro, key_len: int32_t, value_len: size_ptr_t) -> ptr_t;
