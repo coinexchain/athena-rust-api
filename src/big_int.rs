@@ -18,6 +18,9 @@ impl BigInt {
     pub fn zero() -> BigInt {
         BigInt::from_i64(0)
     }
+    pub fn one() -> BigInt {
+        BigInt::from_i64(1)
+    }
 
     pub fn from_i64(n: i64) -> BigInt {
         let bi = BigInt::new();
