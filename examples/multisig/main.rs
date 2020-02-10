@@ -16,8 +16,7 @@ athena::sce_malloc!();
 
 athena::handle!(execute(str, str, i64, str));
 
-#[no_mangle]
-pub extern "C" fn execute(sig_data: &str, to_addr: &str, amt: i64, data: &str) {
+fn execute(sig_data: &str, to_addr: &str, amt: i64, data: &str) {
     let nonce = BigInt::from_str(kv::get_str(NONCE_KEY).unwrap());
     let threshold = kv::get(THRESHOLD_KEY.as_bytes()).unwrap()[0];
     let amt_big = BigInt::from_i64(amt);
