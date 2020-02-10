@@ -14,17 +14,6 @@ macro_rules! sce_malloc {
 }
 
 #[macro_export]
-macro_rules! init {
-    ($f:ident) => {
-        #[no_mangle]
-        pub extern "C" fn init() -> i32 {
-            $f();
-            1
-        }
-    };
-}
-
-#[macro_export]
 macro_rules! handle {
     ( $( $f:ident ( $( $a:tt ),* ) ),* ) => {
         #[no_mangle]

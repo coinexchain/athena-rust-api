@@ -7,27 +7,22 @@ fn main() {
 
 athena::sce_malloc!();
 
-athena::init!(_init);
 athena::handle!(total_supply(), balance_of(bech32), transfer(bech32, i64));
 
-fn _init() {
-    let owner = athena::get_caller_bech32();
-    let total_supply = BigInt::from_i64(1234567890);
-    update_balance(owner, &total_supply);
+pub extern "C" fn total_supply() {
+    let ts = kv::get_str("__total_supply").unwrap();
+    events::publish("erc20", &[("event", "total_supply"), ("val", ts)]);
 }
 
-fn total_supply() {
-    events::publish("erc20", &[("event", "total_supply"), ("val", "1234567890")]);
-}
-
-fn balance_of(addr: &str) {
+pub extern "C" fn balance_of(addr: &str) {
     let bs = get_balance(addr).to_str();
     events::publish("erc20", &[("event", "balance"), ("val", bs)]);
 }
 
 // Given an address and amount, transfers that amount of tokens to that address,
 // from the balance of the address that executed the transfer.
-fn transfer(to_addr: &str, amt: i64) {
+#[no_mangle]
+pub extern "C" fn transfer(to_addr: &str, amt: i64) {
     if amt < 0 {
         return;
     }

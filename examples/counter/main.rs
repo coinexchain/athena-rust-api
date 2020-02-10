@@ -9,14 +9,16 @@ athena::sce_malloc!();
 
 athena::handle!(incr(i64), query());
 
-fn incr(n: i64) {
+#[no_mangle]
+pub extern "C" fn incr(n: i64) {
     let c = get_count();
     let x = BigInt::from_i64(n);
     let new_c = c.add(&x);
     set_count(&new_c);
 }
 
-fn query() {
+#[no_mangle]
+pub extern "C" fn query() {
     let c = get_count().to_str();
     events::publish("counter", &[("count", c)]);
 }
