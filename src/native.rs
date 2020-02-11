@@ -41,7 +41,7 @@ extern "C" {
     // pub fn sci_get_gas_remained() -> i64;
 
     // KV store
-    pub fn sci_kv_get(key: RawPtrRO, key_len: i32, value_len: I32Ptr) -> RawPtr;
+    pub fn sci_kv_get(key: RawPtrRO, key_len: i32, value_len: I32Ptr) -> RawPtrRO;
     pub fn sci_kv_set(key: RawPtrRO, key_len: i32, value: RawPtrRO, value_len: i32);
     pub fn sci_kv_erase(key: RawPtrRO, key_len: i32);
     pub fn sci_kv_iterator(start: RawPtr, start_len: i32, end: RawPtr, end_len: i32) -> Handle;
