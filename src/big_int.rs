@@ -1,7 +1,7 @@
 use super::{native, HostStr};
 
 pub struct BigInt {
-    handle: native::mpint_t,
+    handle: native::Handle,
 }
 
 impl Drop for BigInt {
@@ -11,7 +11,7 @@ impl Drop for BigInt {
 }
 
 impl BigInt {
-    pub fn wrap(handle: native::mpint_t) -> BigInt {
+    pub fn wrap(handle: native::Handle) -> BigInt {
         BigInt { handle: handle }
     }
 
@@ -131,7 +131,7 @@ impl BigInt {
         }
     }
 
-    pub fn get_handle(&self) -> native::mpint_t {
+    pub fn get_handle(&self) -> native::Handle {
         self.handle
     }
 }
