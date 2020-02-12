@@ -7,6 +7,7 @@ pub mod crypto;
 pub mod events;
 pub mod kv;
 pub mod macros;
+pub mod map;
 pub mod native;
 pub mod params;
 

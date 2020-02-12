@@ -2,13 +2,16 @@ use athena_rust_api as athena;
 use athena_rust_api::block::get_timestamp;
 use athena_rust_api::events::begin;
 use athena_rust_api::params::get_str;
-use athena_rust_api::{events, kv, BigInt, HostStr};
+use athena_rust_api::{events, kv, map, BigInt, HostStr};
+use std::collections::HashMap;
 use std::intrinsics::transmute;
+use std::iter::Map;
 use std::panic::resume_unwind;
 use std::thread::AccessError;
 
 fn main() {
     // println!("Hello, world!");
+    let a = vec![1, 23];
 }
 
 athena::sce_malloc!();
@@ -24,6 +27,9 @@ athena::handle!(
     unfreeze(),
     limit(str, i64)
 );
+
+static ACCOUNT_TABLE: map::Map = map::Map("account");
+static TIME_TABLE: map::Map = map::Map("time");
 
 fn _init() {
     let owner = athena::get_caller_bech32();
@@ -44,8 +50,12 @@ fn set_guardian(addr: &str) {
     let caller = athena::get_caller_bech32();
     let master = kv::get_str(MASTER).unwrap();
     if master == caller {
-        _set_address(GUARDIAN_BACKUP, addr);
-        _set_address("guardian_set_time", BigInt::from_i64(get_timestamp().0).to_str())
+        ACCOUNT_TABLE.insert(GUARDIAN_BACKUP, addr);
+        TIME_TABLE.insert("guardian_set_time", BigInt::from_i64(get_timestamp().0).to_str());
+        events::emit(
+            "smart_wallet",
+            &[("event", "set_address"), ("type", "guardian"), ("address", addr)],
+        )
     }
 }
 
@@ -53,8 +63,12 @@ fn set_successor(addr: &str) {
     let caller = athena::get_caller_bech32();
     let master = kv::get_str(MASTER).unwrap();
     if master == caller {
-        _set_address(SUCCESSOR_BACKUP, addr);
-        _set_address("successor_set_time", BigInt::from_i64(get_timestamp().0).to_str())
+        ACCOUNT_TABLE.insert(SUCCESSOR_BACKUP, addr);
+        TIME_TABLE.insert("successor_set_time", BigInt::from_i64(get_timestamp().0).to_str());
+        events::emit(
+            "smart_wallet",
+            &[("event", "set_address"), ("type", "successor"), ("address", addr)],
+        )
     }
 }
 
@@ -109,10 +123,6 @@ fn _set_address(kind: &str, address: &str) {
         return;
     }
     kv::set_str(kind, address);
-    events::emit(
-        "smart_wallet",
-        &[("event", "set_address"), ("type", kind), ("address", address)],
-    )
 }
 
 fn _check_address_kind(kind: &str) -> bool {
@@ -228,3 +238,10 @@ fn _token_limit_key(token: &str, result: &mut String) {
 fn transfer(token: &str, to_address: &str, amount: i64) {}
 
 fn receive(token: &str, src_address: &str, amount: i64) {}
+
+fn example() {
+    let mut m = map::Map::new("token");
+    m.insert("cet", "123");
+    m.get("cet").unwrap();
+    m.delete("cet");
+}
