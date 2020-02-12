@@ -17,12 +17,12 @@ fn _init() {
 }
 
 fn total_supply() {
-    events::publish("erc20", &[("event", "total_supply"), ("val", "1234567890")]);
+    events::emit("erc20", &[("event", "total_supply"), ("val", "1234567890")]);
 }
 
 fn balance_of(addr: &str) {
     let bs = get_balance(addr).to_str();
-    events::publish("erc20", &[("event", "balance"), ("val", bs)]);
+    events::emit("erc20", &[("event", "balance"), ("val", bs)]);
 }
 
 // Given an address and amount, transfers that amount of tokens to that address,
@@ -45,7 +45,7 @@ fn transfer(to_addr: &str, amt: i64) {
 
     update_balance(sender_addr, &sender_balance);
     update_balance(to_addr, &receiver_balance);
-    events::publish(
+    events::emit(
         "erc20",
         &[("event", "transfer"), ("to", to_addr), ("amt", amt_big.to_str())],
     );

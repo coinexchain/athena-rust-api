@@ -18,7 +18,7 @@ fn incr(n: i64) {
 
 fn query() {
     let c = get_count().to_str();
-    events::publish("counter", &[("count", c)]);
+    events::emit("counter", &[("count", c)]);
 }
 
 fn get_count() -> BigInt {

@@ -20,18 +20,18 @@ athena::handle!(
 
 pub extern "C" fn balance_of(addr: &str) {
     let bs = get_balance(addr);
-    events::publish("erc721", &[("event", "balance"), ("addr", addr), ("val", bs)]);
+    events::emit("erc721", &[("event", "balance"), ("addr", addr), ("val", bs)]);
 }
 
 pub extern "C" fn owner_of(token_id: HostStr) {
     let val = get_owner_of(token_id);
     if val.is_some() {
-        events::publish(
+        events::emit(
             "'erc721",
             &[("event", "ownerOf"), ("tokenId", token_id), ("owner", val.unwrap())],
         );
     } else {
-        events::publish("'erc721", &[("event", "ownerOf"), ("tokenId", token_id), ("owner", "")]);
+        events::emit("'erc721", &[("event", "ownerOf"), ("tokenId", token_id), ("owner", "")]);
     }
 }
 
@@ -41,7 +41,7 @@ pub extern "C" fn safe_transfer_from(from: &str, to: &str, token_id: HostStr) {
     let approved_addr = get_approved_for_token(token_id);
     if !approved_addr.is_empty() {
         if !sender.eq(approved_addr) || !owner.unwrap().eq(from) {
-            events::publish(
+            events::emit(
                 "erc721",
                 &[(
                     "error",
@@ -55,7 +55,7 @@ pub extern "C" fn safe_transfer_from(from: &str, to: &str, token_id: HostStr) {
             remove_nft(token_id, from);
             remove_approval(token_id);
             add_nft(token_id, to);
-            events::publish(
+            events::emit(
                 "erc721",
                 &[
                     ("event", "safeTransferFrom"),
@@ -72,7 +72,7 @@ pub extern "C" fn safe_transfer_from(from: &str, to: &str, token_id: HostStr) {
         if owner.unwrap().eq(from) && (is_approved_for_all || owner.unwrap().eq(sender)) {
             remove_nft(token_id, from);
             add_nft(token_id, to);
-            events::publish(
+            events::emit(
                 "erc721",
                 &[
                     ("event", "safeTransferFrom"),
@@ -82,7 +82,7 @@ pub extern "C" fn safe_transfer_from(from: &str, to: &str, token_id: HostStr) {
                 ],
             );
         } else {
-            events::publish(
+            events::emit(
                 "erc721",
                 &[
                     ("event", "safeTransferFrom"),
@@ -95,7 +95,7 @@ pub extern "C" fn safe_transfer_from(from: &str, to: &str, token_id: HostStr) {
         }
         return;
     }
-    events::publish(
+    events::emit(
         "erc721",
         &[
             ("event", "safeTransferFrom"),
@@ -111,14 +111,14 @@ pub extern "C" fn approve(to: &str, token_id: HostStr) {
     let owner = get_owner_of(token_id);
     if owner.is_some() {
         if !owner.unwrap().eq(sender) {
-            events::publish(
+            events::emit(
                 "erc721",
                 &[("error", &format!("msg sender {} is not token's owner", sender))],
             );
         } else {
             let approval = get_approved_for_token(token_id);
             if !approval.is_empty() {
-                events::publish(
+                events::emit(
                     "erc721",
                     &[(
                         "error",
@@ -128,7 +128,7 @@ pub extern "C" fn approve(to: &str, token_id: HostStr) {
                 return;
             }
             approve_nft(token_id, to);
-            events::publish(
+            events::emit(
                 "erc721",
                 &[
                     ("event", "approve_token"),
@@ -139,7 +139,7 @@ pub extern "C" fn approve(to: &str, token_id: HostStr) {
             );
         }
     } else {
-        events::publish(
+        events::emit(
             "erc721",
             &[
                 ("event", "approve_token"),
@@ -150,13 +150,13 @@ pub extern "C" fn approve(to: &str, token_id: HostStr) {
 }
 pub extern "C" fn get_approved(token_id: &str) {
     let approval = get_approved_for_token(token_id);
-    events::publish("erc721", &[("event", "get_approved"), ("approved_addr", approval)]);
+    events::emit("erc721", &[("event", "get_approved"), ("approved_addr", approval)]);
 }
 
 pub extern "C" fn set_approval_for_all(owner: &str, operator: &str, set_or_revoke: &str) {
     let sender = athena::get_caller_bech32();
     if !sender.eq(owner) {
-        return events::publish(
+        return events::emit(
             "erc721",
             &[
                 ("event", "set_approval_for_all"),
@@ -165,7 +165,7 @@ pub extern "C" fn set_approval_for_all(owner: &str, operator: &str, set_or_revok
         );
     }
     kv::set_str(&format!("approvedAll+{}+{}", operator, owner), &set_or_revoke);
-    events::publish(
+    events::emit(
         "erc721",
         &[
             ("event", "set_approval_for_all"),
@@ -176,7 +176,7 @@ pub extern "C" fn set_approval_for_all(owner: &str, operator: &str, set_or_revok
 }
 pub extern "C" fn is_approved_for_all(owner: &str, operator: &str) {
     let set_or_revoke = get_is_approved_for_all(owner, operator);
-    events::publish(
+    events::emit(
         "erc721",
         &[("event", "is_approved_for_all"), ("is_approved_for_all", set_or_revoke)],
     );

@@ -98,9 +98,9 @@ fn _get_address(kind: &str) {
     }
     let addr = kv::get_str(kind);
     if addr.is_some() {
-        return events::publish("smart_wallet", &[("event", kind), ("address", addr.unwrap())]);
+        return events::emit("smart_wallet", &[("event", kind), ("address", addr.unwrap())]);
     }
-    return events::publish("smart_wallet", &[("event", kind), ("address", "not exist")]);
+    return events::emit("smart_wallet", &[("event", kind), ("address", "not exist")]);
 }
 
 fn _set_address(kind: &str, address: &str) {
@@ -109,7 +109,7 @@ fn _set_address(kind: &str, address: &str) {
         return;
     }
     kv::set_str(kind, address);
-    events::publish(
+    events::emit(
         "smart_wallet",
         &[("event", "set_address"), ("type", kind), ("address", address)],
     )
@@ -134,15 +134,15 @@ fn switch() {
             kv::set_str(SUCCESSOR, master);
             kv::set_str(SUCCESSOR, s);
         } else {
-            return events::publish("smart_wallet", &[("event", "switch"), ("result", "invalid caller")]);
+            return events::emit("smart_wallet", &[("event", "switch"), ("result", "invalid caller")]);
         }
     } else {
-        return events::publish(
+        return events::emit(
             "smart_wallet",
             &[("event", "switch"), ("result", "successor not exist")],
         );
     }
-    return events::publish(
+    return events::emit(
         "smart_wallet",
         &[("event", "switch"), ("result", "successor now be master")],
     );
@@ -153,16 +153,16 @@ fn freeze() {
     let successor = kv::get_str(SUCCESSOR);
     if successor.is_some() {
         if successor.unwrap() == caller {
-            events::publish("smart_wallet", &[("event", "freeze"), ("type", "successor freeze")]);
+            events::emit("smart_wallet", &[("event", "freeze"), ("type", "successor freeze")]);
             return kv::set_str("successor_freeze", BigInt::from_i64(get_timestamp().0).to_str());
         }
     }
     let master = kv::get_str(MASTER).unwrap();
     if master == caller {
-        events::publish("smart_wallet", &[("event", "freeze"), ("type", "master freeze")]);
+        events::emit("smart_wallet", &[("event", "freeze"), ("type", "master freeze")]);
         return kv::set_str("freeze", "true");
     }
-    return events::publish("smart_wallet", &[("event", "freeze"), ("type", "invalid")]);
+    return events::emit("smart_wallet", &[("event", "freeze"), ("type", "invalid")]);
 }
 
 fn unfreeze() {
@@ -170,17 +170,17 @@ fn unfreeze() {
     let successor = kv::get_str(SUCCESSOR);
     if successor.is_some() {
         if successor.unwrap() == caller {
-            events::publish("smart_wallet", &[("event", "unfreeze"), ("type", "successor unfreeze")]);
+            events::emit("smart_wallet", &[("event", "unfreeze"), ("type", "successor unfreeze")]);
             return kv::del_str("successor_freeze");
         }
     }
     let master = kv::get_str(MASTER).unwrap();
     if master == caller {
-        events::publish("smart_wallet", &[("event", "unfreeze"), ("type", "master unfreeze")]);
+        events::emit("smart_wallet", &[("event", "unfreeze"), ("type", "master unfreeze")]);
         kv::del_str("successor_freeze");
         return kv::del_str("freeze");
     }
-    return events::publish("smart_wallet", &[("event", "unfreeze"), ("type", "invalid")]);
+    return events::emit("smart_wallet", &[("event", "unfreeze"), ("type", "invalid")]);
 }
 
 fn limit(token: &str, limit: i64) {
@@ -190,10 +190,10 @@ fn limit(token: &str, limit: i64) {
         let successor = kv::get_str(SUCCESSOR);
         if successor.is_some() {
             if successor.unwrap() != caller {
-                return events::publish("smart_wallet", &[("event", "limit"), ("result", "invalid caller")]);
+                return events::emit("smart_wallet", &[("event", "limit"), ("result", "invalid caller")]);
             }
         } else {
-            return events::publish(
+            return events::emit(
                 "smart_wallet",
                 &[("event", "limit"), ("result", "invalid caller and successor not exist")],
             );
@@ -203,7 +203,7 @@ fn limit(token: &str, limit: i64) {
     _token_limit_key(token, &mut s);
     let l = BigInt::from_i64(limit).to_str();
     kv::set_str(s.as_str(), l);
-    return events::publish(
+    return events::emit(
         "smart_wallet",
         &[
             ("event", "limit"),
