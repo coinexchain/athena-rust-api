@@ -2,6 +2,7 @@ mod big_int;
 mod debug;
 
 pub mod block;
+pub mod contracts;
 pub mod crypto;
 pub mod events;
 pub mod kv;
