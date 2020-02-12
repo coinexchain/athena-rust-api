@@ -1,3 +1,5 @@
+//! Functions related to KV Store.
+
 use super::{native, HostData, HostStr};
 
 pub fn get_str(key: &str) -> Option<HostStr> {
@@ -39,6 +41,58 @@ pub fn set(key: &[u8], val: &[u8]) {
 pub fn del(key: &[u8]) {
     unsafe {
         native::sci_kv_erase(key.as_ptr(), key.len() as i32);
+    }
+}
+
+// struct IterResult {
+//     key_ptr: i32,
+//     key_len: i32,
+//     val_ptr: i32,
+//     val_len: i32,
+//     is_valid: i32,
+// }
+
+pub fn iterator_new(start: &[u8], end: &[u8]) -> native::Handle {
+    unsafe { native::sci_kv_iterator(start.as_ptr(), start.len() as i32, end.as_ptr(), end.len() as i32) }
+}
+pub fn iterator_next(h: native::Handle) -> Option<(HostData, HostData)> {
+    let mut r: [i32; 5] = [0; 5];
+    unsafe {
+        native::sci_kv_iterator_next(h, &mut r[0]);
+        if native::is_ok(r[4]) {
+            let key: HostData = std::slice::from_raw_parts(r[0] as *mut u8, r[1] as usize);
+            let val: HostData = std::slice::from_raw_parts(r[2] as *mut u8, r[3] as usize);
+            Some((key, val))
+        } else {
+            None
+        }
+    }
+}
+pub fn iterator_close(h: native::Handle) {
+    unsafe {
+        native::sci_kv_iterator_close(h);
+    }
+}
+
+pub fn reverse_iterator_new(start: &[u8], end: &[u8]) -> native::Handle {
+    unsafe { native::sci_kv_reverse_iterator(start.as_ptr(), start.len() as i32, end.as_ptr(), end.len() as i32) }
+}
+pub fn reverse_iterator_next(h: native::Handle) -> Option<(HostData, HostData)> {
+    let mut r: [i32; 5] = [0; 5];
+    unsafe {
+        native::sci_kv_reverse_iterator_next(h, &mut r[0]);
+        if native::is_ok(r[4]) {
+            let key: HostData = std::slice::from_raw_parts(r[0] as *mut u8, r[1] as usize);
+            let val: HostData = std::slice::from_raw_parts(r[2] as *mut u8, r[3] as usize);
+            Some((key, val))
+        } else {
+            None
+        }
+    }
+}
+pub fn reverse_iterator_close(h: native::Handle) {
+    unsafe {
+        native::sci_kv_reverse_iterator_close(h);
     }
 }
 

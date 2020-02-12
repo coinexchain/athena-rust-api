@@ -1,3 +1,5 @@
+//! Functions to query the current block info.
+
 use super::{native, HostData};
 
 pub fn get_height() -> i64 {

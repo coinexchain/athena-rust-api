@@ -1,3 +1,5 @@
+//! Debug functions.
+
 use super::native;
 
 pub fn print(msg: &str) {
