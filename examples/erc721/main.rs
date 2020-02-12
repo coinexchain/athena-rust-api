@@ -7,6 +7,7 @@ fn main() {
     println!("Hello, world!");
 }
 
+athena::init!(_init);
 athena::sce_malloc!();
 athena::handle!(
     balance_of(str),
@@ -18,12 +19,12 @@ athena::handle!(
     is_approved_for_all(str, str)
 );
 
-pub extern "C" fn balance_of(addr: &str) {
+fn balance_of(addr: &str) {
     let bs = get_balance(addr);
     events::emit("erc721", &[("event", "balance"), ("addr", addr), ("val", bs)]);
 }
 
-pub extern "C" fn owner_of(token_id: HostStr) {
+fn owner_of(token_id: &str) {
     let val = get_owner_of(token_id);
     if val.is_some() {
         events::emit(
@@ -35,7 +36,7 @@ pub extern "C" fn owner_of(token_id: HostStr) {
     }
 }
 
-pub extern "C" fn safe_transfer_from(from: &str, to: &str, token_id: HostStr) {
+fn safe_transfer_from(from: &str, to: &str, token_id: &str) {
     let owner = get_owner_of(token_id);
     let sender = athena::get_caller_bech32();
     let approved_addr = get_approved_for_token(token_id);
@@ -104,9 +105,14 @@ pub extern "C" fn safe_transfer_from(from: &str, to: &str, token_id: HostStr) {
     );
 }
 
-pub extern "C" fn init() {}
+fn _init() {
+    let caller = athena::get_caller_bech32();
+    add_nft("1", caller);
+    add_nft("2", caller);
+    add_nft("3", caller);
+}
 
-pub extern "C" fn approve(to: &str, token_id: HostStr) {
+fn approve(to: &str, token_id: &str) {
     let sender = athena::get_caller_bech32();
     let owner = get_owner_of(token_id);
     if owner.is_some() {
@@ -148,12 +154,12 @@ pub extern "C" fn approve(to: &str, token_id: HostStr) {
         );
     }
 }
-pub extern "C" fn get_approved(token_id: &str) {
+fn get_approved(token_id: &str) {
     let approval = get_approved_for_token(token_id);
     events::emit("erc721", &[("event", "get_approved"), ("approved_addr", approval)]);
 }
 
-pub extern "C" fn set_approval_for_all(owner: &str, operator: &str, set_or_revoke: &str) {
+fn set_approval_for_all(owner: &str, operator: &str, set_or_revoke: &str) {
     let sender = athena::get_caller_bech32();
     if !sender.eq(owner) {
         return events::emit(
@@ -164,7 +170,7 @@ pub extern "C" fn set_approval_for_all(owner: &str, operator: &str, set_or_revok
             ],
         );
     }
-    kv::set_str(&format!("approvedAll+{}+{}", operator, owner), &set_or_revoke);
+    kv::set_str(&get_approved_all_key(operator, owner), &set_or_revoke);
     events::emit(
         "erc721",
         &[
@@ -174,7 +180,7 @@ pub extern "C" fn set_approval_for_all(owner: &str, operator: &str, set_or_revok
         ],
     );
 }
-pub extern "C" fn is_approved_for_all(owner: &str, operator: &str) {
+fn is_approved_for_all(owner: &str, operator: &str) {
     let set_or_revoke = get_is_approved_for_all(owner, operator);
     events::emit(
         "erc721",
@@ -190,18 +196,18 @@ fn get_balance(addr: &str) -> HostStr {
     }
 }
 
-fn get_owner_of(token_id: HostStr) -> Option<HostStr> {
-    kv::get_str(&format!("tokenOwner+{}", token_id))
+fn get_owner_of(token_id: &str) -> Option<&str> {
+    kv::get_str(&get_owner_key(token_id))
 }
-fn set_owner(token_id: HostStr, addr: &str) {
-    kv::set_str(&format!("tokenOwner+{}", token_id), addr);
+fn set_owner(token_id: &str, addr: &str) {
+    kv::set_str(&get_owner_key(token_id), addr);
 }
-fn add_nft(token_id: HostStr, addr: &str) {
+fn add_nft(token_id: &str, addr: &str) {
     let val = get_balance(addr);
     kv::set_str(addr, &format!("{};{}", val, token_id));
     set_owner(token_id, addr);
 }
-fn remove_nft(token_id: HostStr, addr: &str) {
+fn remove_nft(token_id: &str, addr: &str) {
     let val = get_balance(addr);
     if !val.contains(token_id) {
         return;
@@ -210,14 +216,14 @@ fn remove_nft(token_id: HostStr, addr: &str) {
     new_val = new_val.replace(";;", ";");
     kv::set_str(addr, &new_val[..]);
 }
-fn approve_nft(token_id: HostStr, addr: &str) {
-    kv::set_str(&format!("approval+{}", token_id), addr);
+fn approve_nft(token_id: &str, addr: &str) {
+    kv::set_str(&get_approve_for_token_key(token_id), addr);
 }
 fn remove_approval(token_id: &str) {
-    kv::del_str(&format!("approval+{}", token_id));
+    kv::del_str(&get_approve_for_token_key(token_id));
 }
 fn get_approved_for_token(token_id: &str) -> &str {
-    let approval = kv::get_str(&format!("approval+{}", token_id));
+    let approval = kv::get_str(&get_approve_for_token_key(token_id));
     if approval.is_some() {
         approval.unwrap()
     } else {
@@ -225,10 +231,19 @@ fn get_approved_for_token(token_id: &str) -> &str {
     }
 }
 fn get_is_approved_for_all(owner: &str, operator: &str) -> HostStr {
-    let set_or_revoke = kv::get_str(&format!("approvedAll+{}+{}", operator, owner));
+    let set_or_revoke = kv::get_str(&get_approved_all_key(operator, owner));
     if set_or_revoke.is_some() {
         set_or_revoke.unwrap()
     } else {
         &"false"
     }
+}
+fn get_approved_all_key(operator: &str, owner: &str) -> String {
+    format!("approvedAll+{}+{}", operator, owner)
+}
+fn get_approve_for_token_key(token_id: &str) -> String {
+    format!("approval+{}", token_id)
+}
+fn get_owner_key(token_id: &str) -> String {
+    format!("tokenOwner+{}", token_id)
 }
