@@ -1,11 +1,11 @@
 use athena_rust_api as athena;
+use athena_rust_api::block::get_timestamp;
+use athena_rust_api::events::begin;
+use athena_rust_api::params::get_str;
 use athena_rust_api::{events, kv, BigInt, HostStr};
 use std::intrinsics::transmute;
-use std::thread::AccessError;
 use std::panic::resume_unwind;
-use athena_rust_api::block::get_timestamp;
-use athena_rust_api::params::get_str;
-use athena_rust_api::events::begin;
+use std::thread::AccessError;
 
 fn main() {
     // println!("Hello, world!");
@@ -14,8 +14,16 @@ fn main() {
 athena::sce_malloc!();
 
 athena::init!(_init);
-athena::handle!(set_guardian(bech32), set_successor(bech32), get_guardian(), get_successor(),
-                switch(), freeze(), unfreeze(), limit(str, i64));
+athena::handle!(
+    set_guardian(bech32),
+    set_successor(bech32),
+    get_guardian(),
+    get_successor(),
+    switch(),
+    freeze(),
+    unfreeze(),
+    limit(str, i64)
+);
 
 fn _init() {
     let owner = athena::get_caller_bech32();
@@ -101,13 +109,16 @@ fn _set_address(kind: &str, address: &str) {
         return;
     }
     kv::set_str(kind, address);
-    events::publish("smart_wallet", &[("event", "set_address"), ("type", kind), ("address", address)])
+    events::publish(
+        "smart_wallet",
+        &[("event", "set_address"), ("type", kind), ("address", address)],
+    )
 }
 
 fn _check_address_kind(kind: &str) -> bool {
     return match kind {
         SUCCESSOR | GUARDIAN => true,
-        _ => false
+        _ => false,
     };
 }
 
@@ -126,9 +137,15 @@ fn switch() {
             return events::publish("smart_wallet", &[("event", "switch"), ("result", "invalid caller")]);
         }
     } else {
-        return events::publish("smart_wallet", &[("event", "switch"), ("result", "successor not exist")]);
+        return events::publish(
+            "smart_wallet",
+            &[("event", "switch"), ("result", "successor not exist")],
+        );
     }
-    return events::publish("smart_wallet", &[("event", "switch"), ("result", "successor now be master")]);
+    return events::publish(
+        "smart_wallet",
+        &[("event", "switch"), ("result", "successor now be master")],
+    );
 }
 
 fn freeze() {
@@ -176,14 +193,25 @@ fn limit(token: &str, limit: i64) {
                 return events::publish("smart_wallet", &[("event", "limit"), ("result", "invalid caller")]);
             }
         } else {
-            return events::publish("smart_wallet", &[("event", "limit"), ("result", "invalid caller and successor not exist")]);
+            return events::publish(
+                "smart_wallet",
+                &[("event", "limit"), ("result", "invalid caller and successor not exist")],
+            );
         }
     }
     let mut s: String = String::new();
     _token_limit_key(token, &mut s);
     let l = BigInt::from_i64(limit).to_str();
     kv::set_str(s.as_str(), l);
-    return events::publish("smart_wallet", &[("event", "limit"), ("result", "success"), ("token", token), ("limit", l)]);
+    return events::publish(
+        "smart_wallet",
+        &[
+            ("event", "limit"),
+            ("result", "success"),
+            ("token", token),
+            ("limit", l),
+        ],
+    );
 }
 
 fn _token_key(token: &str, result: &mut String) {
