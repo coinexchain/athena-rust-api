@@ -4,6 +4,8 @@ use std::intrinsics::transmute;
 use std::thread::AccessError;
 use std::panic::resume_unwind;
 use athena_rust_api::block::get_timestamp;
+use athena_rust_api::params::get_str;
+use athena_rust_api::events::begin;
 
 fn main() {
     // println!("Hello, world!");
@@ -23,24 +25,63 @@ fn _init() {
 //todo: enum?
 const MASTER: &str = "master";
 const GUARDIAN: &str = "guardian";
+const GUARDIAN_BACKUP: &str = "guardian_backup";
 const SUCCESSOR: &str = "successor";
+const SUCCESSOR_BACKUP: &str = "successor_backup";
+const COOLING_TIME: i64 = 3600 * 24 * 7;
 
 //**** secure module
 //**** manage Guardian, Successor
 fn set_guardian(addr: &str) {
-    _set_address(GUARDIAN, addr)
+    let caller = athena::get_caller_bech32();
+    let master = kv::get_str(MASTER).unwrap();
+    if master == caller {
+        _set_address(GUARDIAN_BACKUP, addr);
+        _set_address("guardian_set_time", BigInt::from_i64(get_timestamp().0).to_str())
+    }
 }
 
 fn set_successor(addr: &str) {
-    _set_address(SUCCESSOR, addr)
+    let caller = athena::get_caller_bech32();
+    let master = kv::get_str(MASTER).unwrap();
+    if master == caller {
+        _set_address(SUCCESSOR_BACKUP, addr);
+        _set_address("successor_set_time", BigInt::from_i64(get_timestamp().0).to_str())
+    }
 }
 
 fn get_guardian() {
-    _get_address(GUARDIAN)
+    let caller = athena::get_caller_bech32();
+    let master = kv::get_str(MASTER).unwrap();
+    if master == caller {
+        let backup = kv::get_str(GUARDIAN_BACKUP);
+        if backup.is_some() {
+            let begin_time = kv::get_str("guardian_set_time").unwrap();
+            if get_timestamp().0 >= begin_time.parse::<i64>().unwrap() + COOLING_TIME {
+                kv::set_str(GUARDIAN, backup.unwrap());
+                kv::del_str(GUARDIAN_BACKUP);
+                kv::del_str("guardian_set_time");
+            }
+        }
+        _get_address(GUARDIAN)
+    }
 }
 
 fn get_successor() {
-    _get_address(SUCCESSOR)
+    let caller = athena::get_caller_bech32();
+    let master = kv::get_str(MASTER).unwrap();
+    if master == caller {
+        let backup = kv::get_str(SUCCESSOR_BACKUP);
+        if backup.is_some() {
+            let begin_time = kv::get_str("successor_set_time").unwrap();
+            if get_timestamp().0 >= begin_time.parse::<i64>().unwrap() + COOLING_TIME {
+                kv::set_str(SUCCESSOR, backup.unwrap());
+                kv::del_str(SUCCESSOR_BACKUP);
+                kv::del_str("successor_set_time");
+            }
+        }
+        _get_address(SUCCESSOR)
+    }
 }
 
 fn _get_address(kind: &str) {
