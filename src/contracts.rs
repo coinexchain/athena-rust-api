@@ -3,9 +3,9 @@ use super::{native, HostData, HostStr};
 /*
     pub fn sci_call_contract(
         id: i64,
-        route: RawPtrRO,
+        route: RawPtr,
         route_len: i32,
-        param: RawPtrRO,
+        param: RawPtr,
         param_len: i32,
         queryRetPtr: I32Ptr,
         queryLenPtr: I32Ptr,

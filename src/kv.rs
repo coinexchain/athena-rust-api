@@ -98,26 +98,26 @@ pub fn reverse_iterator_close(h: native::Handle) {
 
 #[cfg(test)]
 mod tests {
-    use super::super::native::{I32Ptr, RawPtrRO};
+    use super::super::native::{I32Ptr, RawPtr};
     use super::super::{HostData, HostStr};
     use super::*;
 
     static mut VALUE: [u8; 5] = ['h' as u8, 'e' as u8, 'l' as u8, 'l' as u8, 'o' as u8];
 
     #[no_mangle]
-    pub extern "C" fn sci_kv_get(key: RawPtrRO, key_len: i32, value_len: I32Ptr) -> RawPtrRO {
+    pub extern "C" fn sci_kv_get(key: RawPtr, key_len: i32, value_len: I32Ptr) -> RawPtr {
         unsafe {
             if get_host_str(key, key_len) == "key" {
                 *value_len = 5;
                 VALUE.as_ptr()
             } else {
-                0 as RawPtrRO
+                0 as RawPtr
             }
         }
     }
 
     #[no_mangle]
-    pub extern "C" fn sci_kv_set(key: RawPtrRO, key_len: i32, val: RawPtrRO, val_len: i32) {
+    pub extern "C" fn sci_kv_set(key: RawPtr, key_len: i32, val: RawPtr, val_len: i32) {
         if get_host_str(key, key_len) == "key" {
             let val = get_host_str(val, val_len);
             for i in 0..5 {
@@ -130,7 +130,7 @@ mod tests {
         }
     }
 
-    fn get_host_str(ptr: RawPtrRO, len: i32) -> HostStr {
+    fn get_host_str(ptr: RawPtr, len: i32) -> HostStr {
         unsafe {
             let bytes: HostData = std::slice::from_raw_parts(ptr, len as usize);
             let s: HostStr = std::str::from_utf8_unchecked(bytes);

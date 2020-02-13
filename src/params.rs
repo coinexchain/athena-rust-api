@@ -60,3 +60,16 @@ pub fn get_bytes(idx: i32) -> HostData {
 // pub fn sci_param_to_int64_array(n: i32, len_ptr: I32Ptr) -> I64Ptr;
 // pub fn sci_get_param_addr(len_ptr: I32Ptr) -> RawPtr;
 // pub fn sci_get_paramraw_addr(len_ptr: I32Ptr) -> i32;
+
+// #[cfg(test)]
+// mod tests {
+//     use super::super::native::{I32Ptr, RawPtr};
+//     use super::super::{HostData, HostStr};
+//     use super::*;
+
+//     static mut ROUTE: [u8; 3] = ['f' as u8, '0' as u8, 'o' as u8]; // foo
+//     #[no_mangle]
+//     pub extern "C" fn sci_get_route_string(len_ptr: I32Ptr) -> RawPtr {
+//         unsafe { ROUTE.as_ptr() }
+//     }
+// }
