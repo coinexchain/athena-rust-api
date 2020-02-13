@@ -24,8 +24,8 @@ extern "C" {
     pub fn sci_param_decode_as_cbor() -> Bool;
     pub fn sci_param_decode_as_json() -> Bool;
     pub fn sci_param_count() -> i32;
-    pub fn sci_param_to_int64(n: i32) -> i64;
     pub fn sci_param_to_int32(n: i32) -> i32;
+    pub fn sci_param_to_int64(n: i32) -> i64;
     pub fn sci_param_to_string(n: i32, len_ptr: I32Ptr) -> RawPtr;
     pub fn sci_param_to_byteslice(n: i32, len_ptr: I32Ptr) -> RawPtr;
     pub fn sci_param_to_int64_array(n: i32, len_ptr: I32Ptr) -> I64Ptr;

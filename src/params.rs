@@ -61,15 +61,56 @@ pub fn get_bytes(idx: i32) -> HostData {
 // pub fn sci_get_param_addr(len_ptr: I32Ptr) -> RawPtr;
 // pub fn sci_get_paramraw_addr(len_ptr: I32Ptr) -> i32;
 
-// #[cfg(test)]
-// mod tests {
-//     use super::super::native::{I32Ptr, RawPtr};
-//     use super::super::{HostData, HostStr};
-//     use super::*;
+#[cfg(test)]
+mod tests {
+    use super::super::native::{I32Ptr, RawPtr};
+    use super::*;
 
-//     static mut ROUTE: [u8; 3] = ['f' as u8, '0' as u8, 'o' as u8]; // foo
-//     #[no_mangle]
-//     pub extern "C" fn sci_get_route_string(len_ptr: I32Ptr) -> RawPtr {
-//         unsafe { ROUTE.as_ptr() }
-//     }
-// }
+    #[no_mangle]
+    pub extern "C" fn sci_get_route_string(len_ptr: I32Ptr) -> RawPtr {
+        unsafe {
+            *len_ptr = 3;
+            "foo".as_ptr()
+        }
+    }
+    #[no_mangle]
+    pub extern "C" fn sci_param_count() -> i32 {
+        5
+    }
+    #[no_mangle]
+    pub fn sci_param_to_int32(n: i32) -> i32 {
+        assert_eq!(n, 0);
+        300
+    }
+    #[no_mangle]
+    pub fn sci_param_to_int64(n: i32) -> i64 {
+        assert_eq!(n, 1);
+        600
+    }
+    #[no_mangle]
+    pub fn sci_param_to_string(n: i32, len_ptr: I32Ptr) -> RawPtr {
+        assert_eq!(n, 2);
+        unsafe {
+            *len_ptr = 3;
+            "bar".as_ptr()
+        }
+    }
+    #[no_mangle]
+    pub fn sci_param_to_byteslice(n: i32, len_ptr: I32Ptr) -> RawPtr {
+        assert_eq!(n, 3);
+        unsafe {
+            *len_ptr = 4;
+            "data".as_ptr()
+        }
+    }
+
+    #[test]
+    fn api() {
+        assert_eq!(get_route(), "foo");
+        assert_eq!(count(), 5);
+        assert_eq!(get_i32(0), 300);
+        assert_eq!(get_i64(1), 600);
+        assert_eq!(get_str(2), "bar");
+        assert_eq!(get_bytes(3), "data".as_bytes());
+    }
+}

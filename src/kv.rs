@@ -139,7 +139,7 @@ mod tests {
     }
 
     #[test]
-    fn it_works() {
+    fn api() {
         assert_eq!(get_str("foo"), None);
         assert_eq!(get_str("key"), Some("hello"));
         set_str("key", "world");
