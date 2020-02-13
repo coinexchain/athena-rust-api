@@ -1,3 +1,5 @@
+//! Big Integer.
+
 use super::{native, HostStr};
 
 pub struct BigInt {
@@ -133,5 +135,104 @@ impl BigInt {
 
     pub fn get_handle(&self) -> native::Handle {
         self.handle
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::super::native::{Bool, Handle, I32Ptr, RawPtr};
+    use super::*;
+
+    static mut POOL: [i64; 100] = [0; 100];
+    static mut IDX: i32 = 0;
+
+    fn get_val(x: &BigInt) -> i64 {
+        unsafe { POOL[x.handle as usize] }
+    }
+
+    #[no_mangle]
+    pub extern "C" fn sci_mpint_allocate() -> Handle {
+        unsafe {
+            IDX += 1;
+            IDX - 1
+        }
+    }
+    #[no_mangle]
+    pub extern "C" fn sci_mpint_free(i: Handle) {
+        // do nothing
+    }
+    #[no_mangle]
+    pub extern "C" fn sci_mpint_to_string(i: Handle, len_ptr: I32Ptr) -> RawPtr {
+        panic!("TODO");
+    }
+    #[no_mangle]
+    pub extern "C" fn sci_mpint_from_string(i: Handle, str_ptr: RawPtr, str_len: i32) {
+        panic!("TODO");
+    }
+    #[no_mangle]
+    pub extern "C" fn sci_mpint_from_int64(i: Handle, val: i64) {
+        unsafe { POOL[i as usize] = val }
+    }
+    #[no_mangle]
+    pub extern "C" fn sci_mpint_add(z: Handle, a: Handle, b: Handle) {
+        unsafe { POOL[z as usize] = POOL[a as usize] + POOL[b as usize] }
+    }
+    #[no_mangle]
+    pub extern "C" fn sci_mpint_sub(z: Handle, a: Handle, b: Handle) {
+        unsafe { POOL[z as usize] = POOL[a as usize] - POOL[b as usize] }
+    }
+    #[no_mangle]
+    pub extern "C" fn sci_mpint_mul(z: Handle, a: Handle, b: Handle) {
+        unsafe { POOL[z as usize] = POOL[a as usize] * POOL[b as usize] }
+    }
+    #[no_mangle]
+    pub extern "C" fn sci_mpint_eq(a: Handle, b: Handle) -> Bool {
+        unsafe { toBool(POOL[a as usize] == POOL[b as usize]) }
+    }
+    #[no_mangle]
+    pub extern "C" fn sci_mpint_gt(a: Handle, b: Handle) -> Bool {
+        unsafe { toBool(POOL[a as usize] > POOL[b as usize]) }
+    }
+    #[no_mangle]
+    pub extern "C" fn sci_mpint_gte(a: Handle, b: Handle) -> Bool {
+        unsafe { toBool(POOL[a as usize] >= POOL[b as usize]) }
+    }
+    #[no_mangle]
+    pub extern "C" fn sci_mpint_lt(a: Handle, b: Handle) -> Bool {
+        unsafe { toBool(POOL[a as usize] < POOL[b as usize]) }
+    }
+    #[no_mangle]
+    pub extern "C" fn sci_mpint_lte(a: Handle, b: Handle) -> Bool {
+        unsafe { toBool(POOL[a as usize] <= POOL[b as usize]) }
+    }
+
+    fn toBool(b: bool) -> Bool {
+        if b {
+            1
+        } else {
+            0
+        }
+    }
+
+    #[test]
+    fn api() {
+        let a = BigInt::zero(); // 0
+        let b = BigInt::one(); // 1
+        let c = BigInt::from_i64(2); // 2
+        let d = b.add(&c); // 3
+        let e = c.mul(&d); // 6
+        let f = e.sub(&b); // 5
+        let g = BigInt::from_i64(5); // 5
+
+        assert_eq!(get_val(&a), 0);
+        assert_eq!(get_val(&b), 1);
+        assert_eq!(get_val(&c), 2);
+        assert_eq!(get_val(&d), 3);
+        assert_eq!(get_val(&e), 6);
+        assert_eq!(get_val(&f), 5);
+        assert!(f.eq(&g));
+        assert!(!f.eq(&e));
+        assert!(f.gt(&d));
+        assert!(f.lt(&e));
     }
 }
