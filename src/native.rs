@@ -2,7 +2,8 @@ pub type Bool = i32;
 pub type Handle = i32;
 pub type I64Ptr = *mut i64;
 pub type I32Ptr = *mut i32;
-pub type RawPtr = *const u8; // ptr_t
+pub type RawPtr = *const u8;
+// ptr_t
 pub type RawPtrMut = *mut u8; // ptr_t
 
 pub const ADDR_LEN: usize = 20;
@@ -127,6 +128,8 @@ extern "C" {
     pub fn sci_messagestorun_append(msg_type: RawPtr, msg_type_len: i32, json: RawPtr, json_len: i32);
     pub fn sci_messagestorun_len() -> i32;
     pub fn sci_messagestorun_get(n: i32, len_ptr: I32Ptr) -> RawPtr;
+
+    pub fn sci_set_query_result(data: RawPtr, data_len: i32);
 }
 
 /*

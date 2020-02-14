@@ -2,16 +2,16 @@ use athena_rust_api as athena;
 use athena_rust_api::block::get_timestamp;
 use athena_rust_api::events::begin;
 use athena_rust_api::params::get_str;
-use athena_rust_api::{events, kv, map, BigInt, HostStr};
+use athena_rust_api::{events, kv, map, BigInt, HostStr, contracts};
 use std::collections::HashMap;
 use std::intrinsics::transmute;
 use std::iter::Map;
 use std::panic::resume_unwind;
 use std::thread::AccessError;
+use athena_rust_api::contracts::set_result;
 
 fn main() {
     // println!("Hello, world!");
-    let a = vec![1, 23];
 }
 
 athena::sce_malloc!();
@@ -25,7 +25,8 @@ athena::handle!(
     switch(),
     freeze(),
     unfreeze(),
-    limit(str, i64)
+    limit(str, i64),
+    get_balance()
 );
 
 static ACCOUNT_TABLE: map::Map = map::Map("account");
@@ -239,9 +240,13 @@ fn transfer(token: &str, to_address: &str, amount: i64) {}
 
 fn receive(token: &str, src_address: &str, amount: i64) {}
 
-fn example() {
-    let mut m = map::Map::new("token");
-    m.insert("cet", "123");
-    m.get("cet").unwrap();
-    m.delete("cet");
+fn get_balance() {
+    let master = kv::get_str(MASTER).unwrap();
+    let params = athena::cbor_encode!(master);
+    let ret = contracts::call(1, "balance_of", params);
+    unsafe {
+        let balance = std::str::from_utf8_unchecked(ret);
+        events::emit("smart_wallet", &[("event", "balance"), ("result", balance)]);
+    }
+    set_result(ret)
 }

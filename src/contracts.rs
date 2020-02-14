@@ -48,6 +48,12 @@ pub fn call(id: i64, route: &str, params: &[u8]) -> HostData {
     }
 }
 
+pub fn set_result(data: &[u8]) {
+    unsafe {
+        native::sci_set_query_result(data.as_ptr(), data.len() as i32)
+    }
+}
+
 pub fn prepare_coins(denom: &str, amt: i64) {
     unsafe { native::sci_prepare_coins(denom.as_ptr(), denom.len() as i32, amt) }
 }

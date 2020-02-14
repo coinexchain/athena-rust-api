@@ -1,5 +1,5 @@
 use athena_rust_api as athena;
-use athena_rust_api::{events, kv, BigInt};
+use athena_rust_api::{events, kv, BigInt, contracts};
 
 fn main() {
     // println!("Hello, world!");
@@ -22,6 +22,7 @@ fn total_supply() {
 
 fn balance_of(addr: &str) {
     let bs = get_balance(addr).to_str();
+    contracts::set_result(bs.as_bytes());
     events::emit("erc20", &[("event", "balance"), ("val", bs)]);
 }
 
