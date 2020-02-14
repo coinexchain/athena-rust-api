@@ -67,3 +67,17 @@ pub fn __arg_idx(idx: &mut i32) -> i32 {
     *idx += 1;
     *idx - 1
 }
+
+// let x = athena::cbor_encode!(1i32, 2i64, "a");
+#[macro_export]
+macro_rules! cbor_encode {
+    ( $($e:expr),* ) => {
+        {
+            athena::params::cbor_encode_begin();
+            $(
+                athena::params::Param::cbor_encode($e);
+            )*
+            athena::params::cbor_encode_end()
+        }
+    };
+}

@@ -31,6 +31,12 @@ extern "C" {
     pub fn sci_param_to_int64_array(n: i32, len_ptr: I32Ptr) -> I64Ptr;
     pub fn sci_get_param_addr(len_ptr: I32Ptr) -> RawPtr;
     pub fn sci_get_paramraw_addr(len_ptr: I32Ptr) -> i32;
+    pub fn sci_cbor_encode_begin();
+    pub fn sci_cbor_append_i32(n: i32);
+    pub fn sci_cbor_append_i64(n: i64);
+    pub fn sci_cbor_append_string(ptr: RawPtr, len: i32);
+    pub fn sci_cbor_append_byteslice(ptr: RawPtr, len: i32);
+    pub fn sci_cbor_encode_end(len_ptr: I32Ptr) -> RawPtr;
 
     // env
     pub fn sci_get_caller() -> RawPtr;

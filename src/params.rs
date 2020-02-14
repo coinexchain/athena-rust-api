@@ -55,6 +55,53 @@ pub fn get_bytes(idx: i32) -> HostData {
 // pub fn sci_get_param_addr(len_ptr: I32Ptr) -> RawPtr;
 // pub fn sci_get_paramraw_addr(len_ptr: I32Ptr) -> i32;
 
+pub fn cbor_encode_begin() {
+    unsafe { native::sci_cbor_encode_begin() }
+}
+pub fn cbor_append_i32(n: i32) {
+    unsafe { native::sci_cbor_append_i32(n) }
+}
+pub fn cbor_append_i64(n: i64) {
+    unsafe { native::sci_cbor_append_i64(n) }
+}
+pub fn cbor_append_str(s: &str) {
+    unsafe { native::sci_cbor_append_string(s.as_ptr(), s.len() as i32) }
+}
+pub fn cbor_append_bytes(s: &[u8]) {
+    unsafe { native::sci_cbor_append_string(s.as_ptr(), s.len() as i32) }
+}
+pub fn cbor_encode_end() -> HostData {
+    unsafe {
+        let mut len = 0i32;
+        let ptr = native::sci_cbor_encode_end(&mut len);
+        std::slice::from_raw_parts(ptr, len as usize)
+    }
+}
+
+pub trait Param {
+    fn cbor_encode(self);
+}
+impl Param for i32 {
+    fn cbor_encode(self) {
+        cbor_append_i32(self)
+    }
+}
+impl Param for i64 {
+    fn cbor_encode(self) {
+        cbor_append_i64(self)
+    }
+}
+impl Param for &str {
+    fn cbor_encode(self) {
+        cbor_append_str(self)
+    }
+}
+impl Param for &[u8] {
+    fn cbor_encode(self) {
+        cbor_append_bytes(self)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::super::native::{I32Ptr, RawPtr};
