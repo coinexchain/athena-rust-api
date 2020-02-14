@@ -20,7 +20,8 @@ athena::handle!(
 );
 
 fn balance_of(addr: &str) {
-    let bs = get_balance(addr);
+    let bs = &get_balance(addr);
+    //    let bs = &get_balance_reversed(addr);
     events::emit("erc721", &[("event", "balance"), ("addr", addr), ("val", bs)]);
 }
 
@@ -187,13 +188,53 @@ fn is_approved_for_all(owner: &str, operator: &str) {
         &[("event", "is_approved_for_all"), ("is_approved_for_all", set_or_revoke)],
     );
 }
-fn get_balance(addr: &str) -> HostStr {
-    let val = kv::get_str(addr);
-    if val.is_some() {
-        val.unwrap()
-    } else {
-        &""
+fn get_balance(addr: &str) -> String {
+    let mut res = String::new();
+    let min = get_addr_token(addr, true);
+    let max = get_addr_token(addr, false);
+    let iter = kv::iterator_new(
+        get_balance_key(addr, min).as_bytes(),
+        get_balance_key(addr, max).as_bytes(),
+    );
+    loop {
+        let pair = kv::iterator_next(iter);
+        match pair {
+            Some((_, val)) => {
+                res.push_str(unsafe { std::str::from_utf8_unchecked(&val) });
+                res.push_str(";");
+            }
+
+            _ => {
+                kv::iterator_close(iter);
+                break;
+            }
+        }
     }
+    res
+}
+fn get_balance_reversed(addr: &str) -> String {
+    let mut res = String::new();
+    let min = get_addr_token(addr, true);
+    let max = get_addr_token(addr, false);
+    let iter = kv::reverse_iterator_new(
+        get_balance_key(addr, min).as_bytes(),
+        get_balance_key(addr, max).as_bytes(),
+    );
+    loop {
+        let pair = kv::reverse_iterator_next(iter);
+        match pair {
+            Some((_, val)) => {
+                res.push_str(unsafe { std::str::from_utf8_unchecked(&val) });
+                res.push_str(";");
+            }
+
+            _ => {
+                kv::reverse_iterator_close(iter);
+                break;
+            }
+        }
+    }
+    res
 }
 
 fn get_owner_of(token_id: &str) -> Option<&str> {
@@ -203,18 +244,42 @@ fn set_owner(token_id: &str, addr: &str) {
     kv::set_str(&get_owner_key(token_id), addr);
 }
 fn add_nft(token_id: &str, addr: &str) {
-    let val = get_balance(addr);
-    kv::set_str(addr, &format!("{};{}", val, token_id));
+    kv::set_str(&get_balance_key(addr, token_id), token_id);
     set_owner(token_id, addr);
+    _set_addr_token(token_id, addr);
+}
+
+fn _set_addr_token(token_id: &str, addr: &str) {
+    let curr_min = get_addr_token(addr, true);
+    let curr_max = get_addr_token(addr, false);
+    if token_id.lt(curr_min) || curr_min.is_empty() {
+        kv::set_str(&format!("{} min", addr), token_id);
+    } else if token_id.gt(curr_max) || curr_max.is_empty() {
+        kv::set_str(&format!("{} max", addr), token_id);
+    }
+}
+fn get_addr_token(addr: &str, is_min: bool) -> HostStr {
+    let curr = if is_min {
+        kv::get_str(&format!("{} min", addr))
+    } else {
+        kv::get_str(&format!("{} max", addr))
+    };
+    if curr.is_some() {
+        curr.unwrap()
+    } else {
+        &""
+    }
+}
+fn get_addr_min(addr: &str) {
+    let min = get_addr_token(addr, true);
+    events::emit("erc721", &[("min", min)]);
+}
+fn get_addr_max(addr: &str) {
+    let max = get_addr_token(addr, false);
+    events::emit("erc721", &[("max", max)]);
 }
 fn remove_nft(token_id: &str, addr: &str) {
-    let val = get_balance(addr);
-    if !val.contains(token_id) {
-        return;
-    }
-    let mut new_val = val.replace(token_id, "");
-    new_val = new_val.replace(";;", ";");
-    kv::set_str(addr, &new_val[..]);
+    kv::del_str(&format!("{}+{}", addr, token_id));
 }
 fn approve_nft(token_id: &str, addr: &str) {
     kv::set_str(&get_approve_for_token_key(token_id), addr);
@@ -246,4 +311,7 @@ fn get_approve_for_token_key(token_id: &str) -> String {
 }
 fn get_owner_key(token_id: &str) -> String {
     format!("tokenOwner+{}", token_id)
+}
+fn get_balance_key(addr: &str, token_id: &str) -> String {
+    format!("{}+{}", addr, token_id)
 }
