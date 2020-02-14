@@ -1,14 +1,14 @@
 use athena_rust_api as athena;
 use athena_rust_api::block::get_timestamp;
+use athena_rust_api::contracts::set_result;
 use athena_rust_api::events::begin;
 use athena_rust_api::params::get_str;
-use athena_rust_api::{events, kv, map, BigInt, HostStr, contracts};
+use athena_rust_api::{contracts, events, kv, map, BigInt, HostStr};
 use std::collections::HashMap;
 use std::intrinsics::transmute;
 use std::iter::Map;
 use std::panic::resume_unwind;
 use std::thread::AccessError;
-use athena_rust_api::contracts::set_result;
 
 fn main() {
     // println!("Hello, world!");

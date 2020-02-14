@@ -1,5 +1,5 @@
 use athena_rust_api as athena;
-use athena_rust_api::{events, kv, BigInt, contracts};
+use athena_rust_api::{contracts, events, kv, BigInt};
 
 fn main() {
     // println!("Hello, world!");
