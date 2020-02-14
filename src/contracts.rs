@@ -51,7 +51,6 @@ pub fn call(id: i64, route: &str, params: &[u8]) {
     }
 }
 
-// pub fn sci_prepare_coins(denom_ptr: RawPtr, denom_len: i32, amount: i64);
 pub fn prepare_coins(denom: &str, amt: i64) {
     unsafe { native::sci_prepare_coins(denom.as_ptr(), denom.len() as i32, amt) }
 }
@@ -69,7 +68,6 @@ pub fn msg2run_append(msg_type: &[u8], msg_json: &[u8]) {
 pub fn msg2run_len() -> i32 {
     unsafe { native::sci_messagestorun_len() }
 }
-// pub fn sci_messagestorun_get(n: i32, len_ptr: I32Ptr) -> RawPtr;
 pub fn msg2run_get(n: i32) {
     unsafe {
         let mut len: i32 = 0;
