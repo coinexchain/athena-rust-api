@@ -30,9 +30,7 @@ macro_rules! handle {
         #[no_mangle]
         pub extern "C" fn handle() -> i32 {
             let route = athena::get_route();
-            if !athena::params::decode_as_cbor() {
-                panic!();
-            }
+            athena::params::decode_as_cbor();
             $(
                 if route == stringify!($f) {
                     let mut idx = 0i32;

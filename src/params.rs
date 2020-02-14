@@ -12,18 +12,12 @@ pub fn get_route() -> HostStr {
     }
 }
 
-pub fn decode_as_json() -> bool {
-    unsafe {
-        let ok = native::sci_param_decode_as_json();
-        native::is_ok(ok)
-    }
+pub fn decode_as_json() {
+    unsafe { native::sci_param_decode_as_json() }
 }
 
-pub fn decode_as_cbor() -> bool {
-    unsafe {
-        let ok = native::sci_param_decode_as_cbor();
-        native::is_ok(ok)
-    }
+pub fn decode_as_cbor() {
+    unsafe { native::sci_param_decode_as_cbor() }
 }
 
 pub fn count() -> i32 {

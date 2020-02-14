@@ -21,8 +21,8 @@ extern "C" {
 
     // route & params
     pub fn sci_get_route_string(len_ptr: I32Ptr) -> RawPtr;
-    pub fn sci_param_decode_as_cbor() -> Bool;
-    pub fn sci_param_decode_as_json() -> Bool;
+    pub fn sci_param_decode_as_cbor();
+    pub fn sci_param_decode_as_json();
     pub fn sci_param_count() -> i32;
     pub fn sci_param_to_int32(n: i32) -> i32;
     pub fn sci_param_to_int64(n: i32) -> i64;
@@ -111,8 +111,7 @@ extern "C" {
         param_len: i32,
         queryRetPtr: I32Ptr,
         queryLenPtr: I32Ptr,
-        ok: I32Ptr,
-    ) -> i32;
+    );
     pub fn sci_query_contract(
         id: i64,
         route: RawPtr,
@@ -127,9 +126,8 @@ extern "C" {
         param: RawPtr,
         param_len: i32,
         res_len_ptr: I32Ptr,
-        ok: I32Ptr,
     ) -> RawPtr;
-    pub fn sci_messagestorun_append(msg_type: RawPtr, msg_type_len: i32, json: RawPtr, json_len: i32) -> i32;
+    pub fn sci_messagestorun_append(msg_type: RawPtr, msg_type_len: i32, json: RawPtr, json_len: i32);
     pub fn sci_messagestorun_len() -> i32;
     pub fn sci_messagestorun_get(n: i32, len_ptr: I32Ptr) -> RawPtr;
 }
@@ -141,6 +139,5 @@ extern void sci_set_query_result(void* context, ptr_t data, int32_t data_len);
 
 // ===================== Utility functions ========
 extern void sci_contract_received_coin(void* context, ptr_t coinPtr, ptr_t lenPtr);
-extern int32_t sci_destruct_contract(void* context, int32_t id, ptr_t param, int32_t paramLen, bool_ptr_t okPtr);
 
 */
