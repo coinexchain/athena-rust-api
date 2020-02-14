@@ -243,7 +243,7 @@ fn receive(token: &str, src_address: &str, amount: i64) {}
 fn get_balance() {
     let master = kv::get_str(MASTER).unwrap();
     let params = athena::cbor_encode!(master);
-    let ret = contracts::call(1, "balance_of", params);
+    let ret = contracts::call(6, "balance_of", params);
     unsafe {
         let balance = std::str::from_utf8_unchecked(ret);
         events::emit("smart_wallet", &[("event", "balance"), ("result", balance)]);
