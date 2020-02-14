@@ -109,6 +109,7 @@ extern "C" {
     pub fn sci_print_int64(i: i64);
 
     // Cooperate with other smart contracts and other modules
+    pub fn sci_contract_received_coin(len_ptr: I32Ptr) -> RawPtr;
     pub fn sci_prepare_coins(denom_ptr: RawPtr, denom_len: i32, amount: i64);
     pub fn sci_call_contract(
         id: i64,
@@ -133,11 +134,6 @@ extern "C" {
 }
 
 /*
-
 // inside sce_query, sci_set_query_result is used to return the query result
 extern void sci_set_query_result(void* context, ptr_t data, int32_t data_len);
-
-// ===================== Utility functions ========
-extern void sci_contract_received_coin(void* context, ptr_t coinPtr, ptr_t lenPtr);
-
 */

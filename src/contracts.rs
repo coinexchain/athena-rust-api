@@ -57,6 +57,14 @@ pub fn set_result(data: &[u8]) {
 pub fn prepare_coins(denom: &str, amt: i64) {
     unsafe { native::sci_prepare_coins(denom.as_ptr(), denom.len() as i32, amt) }
 }
+pub fn received_coin() -> HostStr {
+    unsafe {
+        let mut len: i32 = 0;
+        let ptr = native::sci_contract_received_coin(&mut len);
+        let bytes: HostData = std::slice::from_raw_parts(ptr, len as usize);
+        std::str::from_utf8_unchecked(bytes)
+    }
+}
 
 pub fn msg2run_append(msg_type: &[u8], msg_json: &[u8]) {
     unsafe {
