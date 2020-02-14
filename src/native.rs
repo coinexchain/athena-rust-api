@@ -109,9 +109,8 @@ extern "C" {
         route_len: i32,
         param: RawPtr,
         param_len: i32,
-        queryRetPtr: I32Ptr,
         queryLenPtr: I32Ptr,
-    );
+    ) -> RawPtr;
     pub fn sci_query_contract(
         id: i64,
         route: RawPtr,

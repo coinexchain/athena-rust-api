@@ -9,7 +9,7 @@ use super::{native, HostData, HostStr};
         res_len_ptr: I32Ptr,
     ) -> RawPtr;
 */
-pub fn query_module(route: &str, params: &[u8]) {
+pub fn query_module(route: &str, params: &[u8]) -> HostData {
     unsafe {
         let mut len: i32 = 0;
         let ptr = native::sci_query_module(
@@ -19,7 +19,7 @@ pub fn query_module(route: &str, params: &[u8]) {
             params.len() as i32,
             &mut len,
         );
-        // TODO
+        std::slice::from_raw_parts(ptr, len as usize)
     }
 }
 
@@ -30,24 +30,21 @@ pub fn query_module(route: &str, params: &[u8]) {
         route_len: i32,
         param: RawPtr,
         param_len: i32,
-        queryRetPtr: I32Ptr,
         queryLenPtr: I32Ptr,
-    );
+    ) - > I32Ptr;
 */
-pub fn call(id: i64, route: &str, params: &[u8]) {
+pub fn call(id: i64, route: &str, params: &[u8]) -> HostData {
     unsafe {
-        let mut ret: i32 = 0;
         let mut len: i32 = 0;
-        native::sci_call_contract(
+        let ptr = native::sci_call_contract(
             id,
             route.as_ptr(),
             route.len() as i32,
             params.as_ptr(),
             params.len() as i32,
-            &mut ret,
             &mut len,
         );
-        // TODO
+        std::slice::from_raw_parts(ptr, len as usize)
     }
 }
 
@@ -68,10 +65,10 @@ pub fn msg2run_append(msg_type: &[u8], msg_json: &[u8]) {
 pub fn msg2run_len() -> i32 {
     unsafe { native::sci_messagestorun_len() }
 }
-pub fn msg2run_get(n: i32) {
+pub fn msg2run_get(n: i32) -> HostData {
     unsafe {
         let mut len: i32 = 0;
         let ptr = native::sci_messagestorun_get(n, &mut len);
-        // TODO
+        std::slice::from_raw_parts(ptr, len as usize)
     }
 }
