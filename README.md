@@ -16,7 +16,7 @@ Rust API for CoinEx Smart Chain.
 3. Build API and examples:
 
    ```bash
-$ git clone https://github.com/coinexchain/athena-rust-api.git
+   $ git clone https://github.com/coinexchain/athena-rust-api.git
    $ cd athena-rust-api
    $ cargo build --examples --target wasm32-unknown-unknown
    ```
